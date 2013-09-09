@@ -2,7 +2,21 @@
 <resources>
 
     <string name="app_name">Loki</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="admin_enabled">Admin enabled. Your PIN has been set to 1234.</string>
+    <string name="device_admin_explanation">Password management rights needed to lock and unlock
+        phone
+    </string>
+    <string name="password_enabled">Password enabled:</string>
+    <string name="password_disabled">Password disabled</string>
+    <string name="settings_summary">Configure Loki</string>
+    <string name="settings_title">Settings</string>
+    <string name="set_password_description">Enter your desired PIN. Note that this WILL override PIN
+        set elsewhere.
+    </string>
+    <string name="set_password_title">Phone PIN</string>
+    <string name="set_wifi_title">Trusted WiFi name</string>
+    <string name="set_wifi_name_description">Enter a WiFi network that you trust. When connected to
+        this network, the phone will disable its PIN.
+    </string>
 
 </resources>
