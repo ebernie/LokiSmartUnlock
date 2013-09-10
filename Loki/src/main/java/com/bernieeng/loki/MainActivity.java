@@ -30,7 +30,7 @@ public class MainActivity extends PreferenceActivity {
         if (mgr.isAdminActive(cn) && prefs.contains(WIFI_NAME) && prefs.contains(PASSWORD)) {
             mgr.resetPassword(prefs.getString(PASSWORD, ""), 0);
         } else {
-            Toast.makeText(this, "Loki is disabled. Make sure you've defined a PIN and safe WiFi name ", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.loki_disabled_warning), Toast.LENGTH_LONG).show();
         }
     }
 

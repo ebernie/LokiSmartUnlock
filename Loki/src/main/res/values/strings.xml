@@ -18,5 +18,8 @@
     <string name="set_wifi_name_description">Enter a WiFi network that you trust. When connected to
         this network, the phone will disable its PIN.
     </string>
+    <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
+        WiFi name
+    </string>
 
 </resources>

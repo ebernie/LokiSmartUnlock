@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 public class WifiStateReceiver extends BroadcastReceiver {
 
     public static final String DEF_VALUE = "";
+//    private static final String LOG_CAT = WifiStateReceiver.class.getName();
 
     public void onReceive(Context context, Intent intent) {
         DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -39,18 +39,18 @@ public class WifiStateReceiver extends BroadcastReceiver {
                     if (safeSsid.equals(getSSID(connectionInfo))) {
                         mgr.resetPassword(DEF_VALUE, 0);
                         Toast.makeText(context, context.getString(R.string.password_disabled), Toast.LENGTH_SHORT).show();
+//                        Log.d(LOG_CAT, "Safe Wifi connected");
                     } else {
                         //foreign SSID, enforce password
                         mgr.resetPassword(password, 0);
+//                        Log.d(LOG_CAT, "Unable to match SSID " + getSSID(connectionInfo));
                         Toast.makeText(context, context.getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
                     }
-                }
-            } else if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-                NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-                if (networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
+                } else {
                     // Wifi is disconnected
                     mgr.resetPassword(password, 0);
                     Toast.makeText(context, context.getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
+//                    Log.d(LOG_CAT, "Wifi disconnected");
                 }
             }
         }
