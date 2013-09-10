@@ -21,5 +21,9 @@
     <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
         WiFi name
     </string>
+    <string name="disable_keyguard_summary">In addition to disabling PIN, Loki will also disable the
+        phone\'s keyguard when you\'re on a safe network
+    </string>
+    <string name="disable_keyguard_title">Disable Keyguard</string>
 
 </resources>

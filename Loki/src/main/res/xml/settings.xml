@@ -13,5 +13,9 @@
         android:inputType="numberPassword"
         android:summary="@string/set_password_description" />
 
+    <CheckBoxPreference
+        android:key="disable_keyguard"
+        android:title="@string/disable_keyguard_title"
+        android:summary="@string/disable_keyguard_summary" />
 
 </PreferenceScreen>

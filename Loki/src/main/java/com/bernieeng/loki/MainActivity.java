@@ -17,6 +17,7 @@ public class MainActivity extends PreferenceActivity {
 
     public static final String WIFI_NAME = "wifi_name";
     public static final String PASSWORD = "password";
+    public static final String DISABLE_KEYGUARD = "disable_keyguard";
     private DevicePolicyManager mgr = null;
     private ComponentName cn = null;
     private SharedPreferences prefs;
