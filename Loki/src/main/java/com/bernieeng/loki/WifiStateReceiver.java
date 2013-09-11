@@ -32,12 +32,13 @@ public class WifiStateReceiver extends BroadcastReceiver {
             final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
             if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
                 NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (networkInfo.isConnected()) {
+                if (networkInfo.isConnectedOrConnecting()) {
                     // Wifi is connected
                     final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                     final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-                    if (safeSsid.equals(getSSID(connectionInfo))) {
+                    if (safeSsid.equals(Util.getSSID(connectionInfo))) {
                         mgr.resetPassword(DEF_VALUE, 0);
+                        //TODO use notification area instead of toasts
                         Toast.makeText(context, context.getString(R.string.password_disabled), Toast.LENGTH_SHORT).show();
                         if (disableKeyguard) {
                             KeyguardManager myKeyGuard = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
@@ -48,7 +49,7 @@ public class WifiStateReceiver extends BroadcastReceiver {
                         mgr.resetPassword(password, 0);
                         Toast.makeText(context, context.getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
                     }
-                } else {
+                } else if (!networkInfo.isConnected()){
                     // Wifi is disconnected
                     mgr.resetPassword(password, 0);
                     Toast.makeText(context, context.getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
@@ -57,14 +58,5 @@ public class WifiStateReceiver extends BroadcastReceiver {
         }
     }
 
-    private String getSSID(WifiInfo connectionInfo) {
-        String ssid = null;
-        if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-            ssid = connectionInfo.getSSID();
-            if (ssid.contains("\"")) {
-                ssid = ssid.substring(1, ssid.length() - 1);
-            }
-        }
-        return ssid;
-    }
+
 }

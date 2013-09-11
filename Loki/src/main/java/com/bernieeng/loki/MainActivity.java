@@ -1,14 +1,19 @@
 package com.bernieeng.loki;
 
+import android.app.KeyguardManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import java.util.List;
@@ -18,6 +23,7 @@ public class MainActivity extends PreferenceActivity {
     public static final String WIFI_NAME = "wifi_name";
     public static final String PASSWORD = "password";
     public static final String DISABLE_KEYGUARD = "disable_keyguard";
+    public static final String FORCE_LOGIN = "force_login";
     private DevicePolicyManager mgr = null;
     private ComponentName cn = null;
     private SharedPreferences prefs;
@@ -28,9 +34,7 @@ public class MainActivity extends PreferenceActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         cn = new ComponentName(this, AdminReceiver.class);
         mgr = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-        if (mgr.isAdminActive(cn) && prefs.contains(WIFI_NAME) && prefs.contains(PASSWORD)) {
-            mgr.resetPassword(prefs.getString(PASSWORD, ""), 0);
-        } else {
+        if (!mgr.isAdminActive(cn) || !prefs.contains(WIFI_NAME) || !prefs.contains(PASSWORD)) {
             Toast.makeText(this, getString(R.string.loki_disabled_warning), Toast.LENGTH_LONG).show();
         }
     }
@@ -39,11 +43,11 @@ public class MainActivity extends PreferenceActivity {
     protected void onResume() {
         super.onResume();
         if (!mgr.isAdminActive(cn)) {
-            Intent intent=
+            Intent intent =
                     new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, cn);
             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                    getString(R.string.device_admin_explanation));
+                    getString(R.string.admin_explanation));
             startActivity(intent);
         }
     }
@@ -61,19 +65,69 @@ public class MainActivity extends PreferenceActivity {
             findPreference(PASSWORD).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), "PIN set to " + (String) newValue, Toast.LENGTH_LONG).show();
+                    if (TextUtils.isEmpty((String) newValue)) {
+                    } else {
+                        Toast.makeText(getActivity(), "PIN set to " + (String) newValue, Toast.LENGTH_LONG).show();
+                    }
+
                     return true;
                 }
             });
 
-            findPreference(WIFI_NAME).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(WIFI_NAME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Toast.makeText(getActivity(), "Safe WiFi defined as " + (String) newValue, Toast.LENGTH_LONG).show();
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(new Intent(getActivity(), WifiListActivity.class), WifiListActivity.WIFI_PICK_REQUEST);
                     return true;
                 }
             });
         }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if (RESULT_OK == resultCode) {
+                switch (requestCode) {
+                    case WifiListActivity.WIFI_PICK_REQUEST:
+                        final String ssid = data.getStringExtra(WifiListActivity.WIFI_PICK_RESULT);
+                        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        prefs.edit().putString(WIFI_NAME, ssid).commit();
+                        Toast.makeText(getActivity(), "Safe WiFi defined as " + ssid, Toast.LENGTH_LONG).show();
+                        break;
+                }
+            }
+        }
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        final String defValue = "";
+        //retrieve user settings
+        final String password = prefs.getString(MainActivity.PASSWORD, defValue);
+        final String safeSsid = prefs.getString(MainActivity.WIFI_NAME, defValue);
+        final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
+        if (!mgr.isAdminActive(cn) || !prefs.contains(WIFI_NAME) || !prefs.contains(PASSWORD)) {
+            Toast.makeText(this, getString(R.string.loki_disabled_warning), Toast.LENGTH_LONG).show();
+        } else {
+            //check if we're connected to safe wifi, and do our stuff
+            final WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            if (safeSsid.equals(Util.getSSID(connectionInfo))) {
+                mgr.resetPassword(defValue, 0);
+                //TODO use notification area instead of toasts
+                Toast.makeText(this, getString(R.string.password_disabled), Toast.LENGTH_SHORT).show();
+                if (disableKeyguard) {
+                    KeyguardManager myKeyGuard = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+                    myKeyGuard.newKeyguardLock(null).disableKeyguard();
+                }
+            } else {
+                //foreign SSID, enforce password
+                mgr.resetPassword(password, 0);
+                Toast.makeText(this, getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
 }
