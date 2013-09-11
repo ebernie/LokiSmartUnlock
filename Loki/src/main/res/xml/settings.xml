@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
+    <Preference
         android:key="wifi_name"
         android:title="@string/set_wifi_title"
-        android:inputType="text"
         android:summary="@string/set_wifi_name_description" />
 
     <EditTextPreference
@@ -16,6 +15,13 @@
     <CheckBoxPreference
         android:key="disable_keyguard"
         android:title="@string/disable_keyguard_title"
-        android:summary="@string/disable_keyguard_summary" />
+        android:summaryOn="@string/disable_keyguard_summary"
+        android:summaryOff="@string/disable_keyguard_summary_off" />
+
+    <CheckBoxPreference
+        android:key="force_login"
+        android:title="Secure Loki using PIN"
+        android:summaryOn="@string/force_login_summary"
+        android:summaryOff="@string/force_login_summary_off" />
 
 </PreferenceScreen>

@@ -2,9 +2,8 @@
 <resources>
 
     <string name="app_name">Loki</string>
-    <string name="admin_enabled">Admin enabled. Your PIN has been set to 1234.</string>
-    <string name="device_admin_explanation">Password management rights needed to lock and unlock
-        phone
+    <string name="devrice_admin_explanation">Password management rights needed to lock and unlock
+        your device.
     </string>
     <string name="password_enabled">Password enabled:</string>
     <string name="password_disabled">Password disabled</string>
@@ -21,9 +20,24 @@
     <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
         WiFi name
     </string>
-    <string name="disable_keyguard_summary">In addition to disabling PIN, Loki will also disable the
-        phone\'s keyguard when you\'re on a safe network
+    <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network
     </string>
     <string name="disable_keyguard_title">Disable Keyguard</string>
+    <string name="admin_disabled_message">For security reasons, your device will now be locked with
+        the PIN set in Loki
+    </string>
+    <string name="enter_pin">Enter PIN</string>
+    <string name="incorrect_pin">Incorrect PIN</string>
+    <string name="disable_keyguard_summary_off">Keyguard is always shown</string>
+    <string name="force_login_summary_off">Loki will run without a PIN (not secure)</string>
+    <string name="force_login_summary">Your PIN is required when launching Loki (recommended)
+    </string>
+    <string name="admin_explanation">Loki needs admin rights in order to lock and unlock your
+        device
+    </string>
+    <string name="expired_msg">This alpha/beta version of Loki has expired</string>
+    <string name="expired">Expired</string>
+    <string name="quit">Quit</string>
+    <string name="select_wifi_network">Select a WiFi network</string>
 
 </resources>
