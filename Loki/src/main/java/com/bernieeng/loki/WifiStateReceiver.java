@@ -11,8 +11,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 /**
  * Created by ebernie on 9/9/13.
@@ -38,8 +36,6 @@ public class WifiStateReceiver extends BroadcastReceiver {
                     final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
                     if (safeSsid.equals(Util.getSSID(connectionInfo))) {
                         mgr.resetPassword(DEF_VALUE, 0);
-                        //TODO use notification area instead of toasts
-                        Toast.makeText(context, context.getString(R.string.password_disabled), Toast.LENGTH_SHORT).show();
                         if (disableKeyguard) {
                             KeyguardManager myKeyGuard = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
                             myKeyGuard.newKeyguardLock(null).disableKeyguard();
@@ -47,12 +43,10 @@ public class WifiStateReceiver extends BroadcastReceiver {
                     } else {
                         //foreign SSID, enforce password
                         mgr.resetPassword(password, 0);
-                        Toast.makeText(context, context.getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
                     }
                 } else if (!networkInfo.isConnected()){
                     // Wifi is disconnected
                     mgr.resetPassword(password, 0);
-                    Toast.makeText(context, context.getString(R.string.password_enabled) + password, Toast.LENGTH_SHORT).show();
                 }
             }
         }

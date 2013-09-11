@@ -9,18 +9,18 @@
     <string name="password_disabled">Password disabled</string>
     <string name="settings_summary">Configure Loki</string>
     <string name="settings_title">Settings</string>
-    <string name="set_password_description">Enter your desired PIN. Note that this WILL override PIN
+    <string name="set_password_description">Enter your desired PIN. This PIN will be required to unlock your device if it is not connected to a safe network. Note that this WILL override PIN
         set elsewhere.
     </string>
     <string name="set_password_title">Phone PIN</string>
     <string name="set_wifi_title">Trusted WiFi name</string>
     <string name="set_wifi_name_description">Enter a WiFi network that you trust. When connected to
-        this network, the phone will disable its PIN.
+        this network, the device will not request for a PIN to unlock.
     </string>
     <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
         WiFi name
     </string>
-    <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network
+    <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network (experimental)
     </string>
     <string name="disable_keyguard_title">Disable Keyguard</string>
     <string name="admin_disabled_message">For security reasons, your device will now be locked with
