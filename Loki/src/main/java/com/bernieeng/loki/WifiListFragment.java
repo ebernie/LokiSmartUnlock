@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class WifiListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private ArrayList<String> configuredNetworkNames;
+    private ArrayList<String> configuredNetworkNames = new ArrayList<String>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
