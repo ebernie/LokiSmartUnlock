@@ -6,8 +6,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <fragment
-        android:id="@+id/fragmentWifi"
-        android:name="com.bernieeng.loki.WifiListFragment"
+        android:id="@+id/fragmentBt"
+        android:name="com.bernieeng.loki.BluetoothListFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

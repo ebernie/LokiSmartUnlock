@@ -1,15 +1,21 @@
 package com.bernieeng.loki;
 
-import android.app.Service;
+import android.app.KeyguardManager;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 /**
  * Created by ebernie on 9/11/13.
  */
 public class Util {
+    public static final String DEF_VALUE = "";
+    private static DevicePolicyManager mgr;
+    private static KeyguardManager.KeyguardLock keyguardLock;
 
     public static String getSSID(WifiInfo connectionInfo) {
         String ssid = null;
@@ -27,15 +33,31 @@ public class Util {
         return ssid;
     }
 
-    public static boolean isWifiReady(Context ctx) {
-        boolean ready = false;
-        WifiManager wifiManager = (WifiManager) ctx
-                .getSystemService(Service.WIFI_SERVICE);
-        int wifiState = wifiManager.getWifiState();
-        if (wifiState == WifiManager.WIFI_STATE_ENABLED
-                || wifiState == WifiManager.WIFI_STATE_ENABLING) {
-            ready = true;
+    public static void setPassword(Context context, String password) {
+        DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        ComponentName cn = new ComponentName(context, AdminReceiver.class);
+        if (mgr.isAdminActive(cn)) {
+            mgr.resetPassword(password, 0);
         }
-        return ready;
+    }
+
+    private static boolean settingsOkay(Context context) {
+        mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        ComponentName cn = new ComponentName(context, AdminReceiver.class);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mgr.isAdminActive(cn) && prefs.contains(MainActivity.WIFI_NAME) && prefs.contains(MainActivity.PASSWORD);
+    }
+
+    public static void unSetPassword(Context context, boolean disableKeyguard) {
+        if (settingsOkay(context)) {
+            mgr.resetPassword(DEF_VALUE, 0);
+            if (disableKeyguard) {
+                if (keyguardLock == null) {
+                    KeyguardManager myKeyGuard = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                    keyguardLock = myKeyGuard.newKeyguardLock(null);
+                }
+                keyguardLock.disableKeyguard();
+            }
+        }
     }
 }

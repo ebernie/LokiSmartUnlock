@@ -1,13 +1,9 @@
 package com.bernieeng.loki;
 
-import android.app.KeyguardManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -24,6 +20,10 @@ public class MainActivity extends PreferenceActivity {
     public static final String PASSWORD = "password";
     public static final String DISABLE_KEYGUARD = "disable_keyguard";
     public static final String FORCE_LOGIN = "force_login";
+    public static final String BT_NAME = "bt_name";
+    public static final String BT_UNLOCK = "bt_unlock";
+    public static final String WIFI_UNLOCK = "wifi_unlock";
+
     private DevicePolicyManager mgr = null;
     private ComponentName cn = null;
     private SharedPreferences prefs;
@@ -58,10 +58,13 @@ public class MainActivity extends PreferenceActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragment {
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
             findPreference(PASSWORD).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -74,10 +77,53 @@ public class MainActivity extends PreferenceActivity {
                 }
             });
 
-            findPreference(WIFI_NAME).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            final Preference wifipref = findPreference(WIFI_NAME);
+            wifipref.setEnabled(prefs.getBoolean(WIFI_UNLOCK, false));
+            wifipref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     startActivityForResult(new Intent(getActivity(), WifiListActivity.class), WifiListActivity.WIFI_PICK_REQUEST);
+                    return true;
+                }
+            });
+
+            findPreference(WIFI_UNLOCK).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Boolean checked = (Boolean) newValue;
+                    wifipref.setEnabled((Boolean) newValue);
+                    prefs.edit().putBoolean(WIFI_UNLOCK, checked);
+                    if (checked) {
+                        wifipref.getOnPreferenceClickListener().onPreferenceClick(wifipref);
+                    }
+                    return true;
+                }
+            });
+
+            final Preference btpref = findPreference(BT_NAME);
+            btpref.setEnabled(prefs.getBoolean(BT_UNLOCK, false));
+            btpref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(new Intent(getActivity(), BluetoothListActivity.class), BluetoothListActivity.BT_PICK_REQUEST);
+                    return true;
+                }
+            });
+
+            findPreference(BT_UNLOCK).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Boolean checked = (Boolean) newValue;
+                    btpref.setEnabled(checked);
+                    prefs.edit().putBoolean(BT_UNLOCK, checked);
+
+                    if (checked) {
+                        getActivity().startService(new Intent(getActivity(), BluetoothMonService.class));
+                        btpref.getOnPreferenceClickListener().onPreferenceClick(btpref);
+                    } else {
+                        getActivity().stopService(new Intent(getActivity(), BluetoothMonService.class));
+                    }
+
                     return true;
                 }
             });
@@ -87,42 +133,20 @@ public class MainActivity extends PreferenceActivity {
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
             if (RESULT_OK == resultCode) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 switch (requestCode) {
                     case WifiListActivity.WIFI_PICK_REQUEST:
                         final String ssid = data.getStringExtra(WifiListActivity.WIFI_PICK_RESULT);
-                        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         prefs.edit().putString(WIFI_NAME, ssid).commit();
                         Toast.makeText(getActivity(), "Safe WiFi defined as " + ssid, Toast.LENGTH_SHORT).show();
                         break;
+
+                    case BluetoothListActivity.BT_PICK_REQUEST:
+                        final String btName = data.getStringExtra(BluetoothListActivity.BT_PICK_RESULT);
+                        prefs.edit().putString(BT_NAME, btName).commit();
+                        Toast.makeText(getActivity(), "Safe BT defined as " + btName, Toast.LENGTH_SHORT).show();
                 }
             }
         }
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        final String defValue = "";
-        //retrieve user settings
-        final String password = prefs.getString(MainActivity.PASSWORD, defValue);
-        final String safeSsid = prefs.getString(MainActivity.WIFI_NAME, defValue);
-        final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
-        if (mgr.isAdminActive(cn) && prefs.contains(WIFI_NAME) && prefs.contains(PASSWORD)) {
-            //check if we're connected to safe wifi, and do our stuff
-            final WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            if (safeSsid.equals(Util.getSSID(connectionInfo))) {
-                mgr.resetPassword(defValue, 0);
-                if (disableKeyguard) {
-                    KeyguardManager myKeyGuard = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-                    myKeyGuard.newKeyguardLock(null).disableKeyguard();
-                }
-            } else {
-                //foreign SSID, enforce password
-                mgr.resetPassword(password, 0);
-            }
-        }
-
     }
 }

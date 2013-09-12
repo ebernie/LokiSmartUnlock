@@ -10,7 +10,7 @@ import android.os.Bundle;
 public class WifiListActivity extends Activity {
 
     public static final int WIFI_PICK_REQUEST = 1001;
-    public static String WIFI_PICK_RESULT = "com.bernieeng.loki";
+    public static String WIFI_PICK_RESULT = "com.bernieeng.loki.wifi";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <CheckBoxPreference
+        android:key="wifi_unlock"
+        android:title="@string/wifi_unlock_title"
+        android:summary="@string/wifi_unlock_desc" />
+
     <Preference
         android:key="wifi_name"
         android:title="@string/set_wifi_title"
-        android:summary="@string/set_wifi_name_description" />
+        android:summary="@string/set_wifi_name_description"
+        android:enabled="false"
+        />
+
+    <CheckBoxPreference
+        android:key="bt_unlock"
+        android:title="@string/bt_unlock_title"
+        android:summary="@string/bt_unlock_desc" />
+
+    <Preference
+        android:key="bt_name"
+        android:title="@string/set_bt_name"
+        android:summary="@string/set_bt_name_description"
+        android:enabled="false"
+        />
 
     <EditTextPreference
         android:key="password"

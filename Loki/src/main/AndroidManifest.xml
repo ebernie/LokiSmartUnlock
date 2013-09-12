@@ -5,13 +5,15 @@
     android:versionName="0.4" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="16"
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -31,6 +33,7 @@
         </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".WifiListActivity" android:label="@string/select_wifi_network"/>
+        <activity android:name=".BluetoothListActivity" android:label="@string/select_bt"/>
 
         <receiver
             android:name="AdminReceiver"
@@ -44,11 +47,13 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".WifiStateReceiver" android:enabled="true">
+        <receiver android:name=".WifiStateReceiver" android:enabled="true" android:exported="false">
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
+
+        <service android:name=".BluetoothMonService" />
     </application>
 
 </manifest>

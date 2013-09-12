@@ -45,13 +45,20 @@ public class WifiListFragment extends ListFragment implements AdapterView.OnItem
 
     private void showErrorDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("No WiFi networks configured. Run this setup again when you've connected to your safe WiFi network").setTitle("WiFi Setup").setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.no_wifi_networks_configured)).setTitle(getString(R.string.wifi_setup)).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 getActivity().setResult(getActivity().RESULT_CANCELED);
                 getActivity().finish();
             }
-        }).setCancelable(false);
+        }).setCancelable(false).setNeutralButton("Setup WiFi", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(
+                        WifiManager.ACTION_PICK_WIFI_NETWORK));
+                getActivity().setResult(getActivity().RESULT_CANCELED);
+            }
+        });
         builder.show();
     }
 

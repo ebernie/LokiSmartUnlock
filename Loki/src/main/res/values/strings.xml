@@ -13,9 +13,9 @@
         set elsewhere.
     </string>
     <string name="set_password_title">Phone PIN</string>
-    <string name="set_wifi_title">Trusted WiFi name</string>
+    <string name="set_wifi_title">Set trusted WiFi name</string>
     <string name="set_wifi_name_description">Enter a WiFi network that you trust. When connected to
-        this network, the device will not request for a PIN to unlock.
+        this device, a PIN will not be required for unlock.
     </string>
     <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
         WiFi name
@@ -39,5 +39,22 @@
     <string name="expired">Expired</string>
     <string name="quit">Quit</string>
     <string name="select_wifi_network">Select a WiFi network</string>
+    <string name="set_bt_name_description">Enter a Bluetooth device that you trust. When connected
+        to
+        this device, a PIN will not be required for unlock.
+    </string>
+    <string name="set_bt_name">Set trusted Bluetooth device name</string>
+    <string name="bt_unlock">Bluetooth unlock enabled</string>
+    <string name="launch_loki">Launch Loki</string>
+    <string name="wifi_unlock_desc">Allow PIN to be disabled using WiFi</string>
+    <string name="wifi_unlock_title">Enable WiFi unlocking</string>
+    <string name="bt_unlock_desc">Allow PIN to be disabled using a Bluetooth device</string>
+    <string name="bt_unlock_title">Enable Bluetooth unlocking</string>
+    <string name="select_bt">Pick a paired Bluetooth device</string>
+    <string name="no_wifi_networks_configured">No WiFi networks configured. Run this setup again
+        when you\'ve connected to your safe WiFi network
+    </string>
+    <string name="wifi_setup">WiFi Setup</string>
+    <string name="pair">Pair</string>
 
 </resources>

@@ -1,9 +1,6 @@
 package com.bernieeng.loki;
 
-import android.app.KeyguardManager;
-import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,37 +17,30 @@ public class WifiStateReceiver extends BroadcastReceiver {
     public static final String DEF_VALUE = "";
 
     public void onReceive(Context context, Intent intent) {
-        DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName cn = new ComponentName(context, AdminReceiver.class);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        if (mgr.isAdminActive(cn) && prefs.contains(MainActivity.WIFI_NAME) && prefs.contains(MainActivity.PASSWORD)) {
-            final String password = prefs.getString(MainActivity.PASSWORD, DEF_VALUE);
-            final String safeSsid = prefs.getString(MainActivity.WIFI_NAME, DEF_VALUE);
-            final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
-            if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-                NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (networkInfo.isConnectedOrConnecting()) {
-                    // Wifi is connected
-                    final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                    final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-                    if (safeSsid.equals(Util.getSSID(connectionInfo))) {
-                        mgr.resetPassword(DEF_VALUE, 0);
-                        if (disableKeyguard) {
-                            KeyguardManager myKeyGuard = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-                            myKeyGuard.newKeyguardLock(null).disableKeyguard();
-                        }
-                    } else {
-                        //foreign SSID, enforce password
-                        mgr.resetPassword(password, 0);
-                    }
-                } else if (!networkInfo.isConnected()){
-                    // Wifi is disconnected
-                    mgr.resetPassword(password, 0);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String password = prefs.getString(MainActivity.PASSWORD, DEF_VALUE);
+        final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
+        final String safeSsid = prefs.getString(MainActivity.WIFI_NAME, DEF_VALUE);
+        final boolean shouldUnlock = prefs.getBoolean(MainActivity.WIFI_UNLOCK, false);
+
+        NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+        if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+            if (networkInfo.isConnectedOrConnecting()) {
+                // Wifi is connected
+                final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+
+                if (safeSsid.equals(Util.getSSID(connectionInfo)) && shouldUnlock) {
+                    Util.unSetPassword(context, disableKeyguard);
                 }
+            } else {
+                //foreign SSID, enforce password
+                Util.setPassword(context, password);
             }
+        } else if (!networkInfo.isConnected()) {
+            // Wifi is disconnected
+            Util.setPassword(context, password);
         }
     }
-
-
 }
