@@ -20,6 +20,47 @@ android {
         minSdkVersion 16
         targetSdkVersion 18
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+        }
+        release {
+            keyAlias = 'loki'
+        }
+    }
+
+    if (project.hasProperty('storeFile') &&
+            project.hasProperty('storePassword') &&
+            project.hasProperty('keyPassword')) {
+        android.signingConfigs.release.storeFile = file(storeFile)
+        android.signingConfigs.release.storePassword = storePassword
+        android.signingConfigs.release.keyPassword = keyPassword
+    } else {
+        buildTypes.release.signingConfig = null
+    }
+
+    buildTypes {
+
+        debug {
+            packageNameSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+        }
+
+        debugRelease {
+            debuggable true
+            packageNameSuffix '.debugrelease'
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            debuggable false
+            signingConfig signingConfigs.release
+            runProguard true
+            proguardFile 'proguard-project.txt'
+        }
+
+    }
 }
 
 dependencies {
