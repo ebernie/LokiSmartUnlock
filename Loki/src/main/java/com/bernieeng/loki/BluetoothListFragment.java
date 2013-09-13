@@ -48,7 +48,9 @@ public class BluetoothListFragment extends ListFragment implements AdapterView.O
             final Iterator<BluetoothDevice> iterator = pairedDevices.iterator();
             while (iterator.hasNext()) {
                 final BluetoothDevice device = iterator.next();
-                pairedBluetoothDevices.add(device.getName());
+                StringBuilder sb = new StringBuilder(device.getName());
+                sb.append("(").append(device.getAddress()).append(")");
+                pairedBluetoothDevices.add(sb.toString());
             }
             setListAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, pairedBluetoothDevices));
         } else {

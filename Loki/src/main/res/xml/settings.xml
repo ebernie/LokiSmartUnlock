@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <EditTextPreference
+        android:key="password"
+        android:title="@string/set_password_title"
+        android:inputType="numberPassword"
+        android:summary="@string/set_password_description" />
+
     <CheckBoxPreference
         android:key="wifi_unlock"
         android:title="@string/wifi_unlock_title"
-        android:summary="@string/wifi_unlock_desc" />
+        android:summary="@string/wifi_unlock_desc"
+        />
 
     <Preference
         android:key="wifi_name"
@@ -24,12 +31,6 @@
         android:summary="@string/set_bt_name_description"
         android:enabled="false"
         />
-
-    <EditTextPreference
-        android:key="password"
-        android:title="@string/set_password_title"
-        android:inputType="numberPassword"
-        android:summary="@string/set_password_description" />
 
     <CheckBoxPreference
         android:key="disable_keyguard"

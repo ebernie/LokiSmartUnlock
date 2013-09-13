@@ -41,7 +41,7 @@ public class Util {
         }
     }
 
-    private static boolean settingsOkay(Context context) {
+    public static boolean settingsOkay(Context context) {
         mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName cn = new ComponentName(context, AdminReceiver.class);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
