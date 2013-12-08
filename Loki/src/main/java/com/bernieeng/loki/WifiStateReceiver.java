@@ -32,15 +32,15 @@ public class WifiStateReceiver extends BroadcastReceiver {
                 final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
 
                 if (safeSsid.equals(Util.getSSID(connectionInfo)) && shouldUnlock) {
-                    Util.unSetPassword(context, disableKeyguard);
+                    Util.unSetPassword(context, disableKeyguard, UnlockType.WIFI);
                 }
             } else {
                 //foreign SSID, enforce password
-                Util.setPassword(context, password);
+                Util.setPassword(context, password, UnlockType.WIFI);
             }
         } else if (!networkInfo.isConnected()) {
             // Wifi is disconnected
-            Util.setPassword(context, password);
+            Util.setPassword(context, password, UnlockType.WIFI);
         }
     }
 }

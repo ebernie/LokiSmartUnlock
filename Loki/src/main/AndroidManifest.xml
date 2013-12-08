@@ -10,10 +10,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -21,39 +22,60 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
+            android:name="com.bernieeng.loki.LoginActivity"
+            android:label="@string/app_name"
             android:noHistory="true"
-            android:windowSoftInputMode="adjustResize|stateVisible"
-            android:label="@string/app_name" >
+            android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".WifiListActivity" android:label="@string/select_wifi_network"/>
-        <activity android:name=".BluetoothListActivity" android:label="@string/select_bt"/>
+        <activity android:name="com.bernieeng.loki.MainActivity" />
+        <activity
+            android:name="com.bernieeng.loki.WifiListActivity"
+            android:label="@string/select_wifi_network" />
+        <activity
+            android:name="com.bernieeng.loki.BluetoothListActivity"
+            android:label="@string/select_bt" />
 
         <receiver
-            android:name="AdminReceiver"
+            android:name="com.bernieeng.loki.AdminReceiver"
             android:description="@string/admin_explanation"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
             <meta-data
                 android:name="android.app.device_admin"
-                android:resource="@xml/device_admin"/>
+                android:resource="@xml/device_admin" />
 
             <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".WifiStateReceiver" android:enabled="true" android:exported="false">
+        <receiver
+            android:name="com.bernieeng.loki.WifiStateReceiver"
+            android:enabled="true"
+            android:exported="false" >
             <intent-filter>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
+                <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".BluetoothMonService" />
+        <service android:name="com.bernieeng.loki.BluetoothMonService" />
+        <service
+            android:name="com.bernieeng.loki.ActivityRecognitionService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <service
+            android:name="com.bernieeng.loki.ActivityRecognitionAlertService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

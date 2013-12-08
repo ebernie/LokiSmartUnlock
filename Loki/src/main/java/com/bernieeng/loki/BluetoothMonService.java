@@ -66,7 +66,8 @@ public class BluetoothMonService extends Service {
                 .setSmallIcon(R.drawable.ic_action_key)
                 .setOngoing(true)
                 .setAutoCancel(false)
-                .addAction(R.drawable.ic_action_key, getString(R.string.launch_loki), pendingIntent)
+                .setContentIntent(pendingIntent)
+                .setTicker(getString(R.string.bt_unlock_enabled))
                 .build();
 
         // Send the notification.
@@ -77,7 +78,9 @@ public class BluetoothMonService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(btReceiver);
-        mNM.cancel(NOTIFICATION);
+        if (mNM != null) {
+            mNM.cancel(NOTIFICATION);
+        }
 
     }
 

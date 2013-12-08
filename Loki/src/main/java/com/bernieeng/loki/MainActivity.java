@@ -15,6 +15,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class MainActivity extends PreferenceActivity {
     public static final String BT_UNLOCK = "bt_unlock";
     public static final String WIFI_UNLOCK = "wifi_unlock";
     private static final String BT_ADDRESS = "bt_address";
+    public static final String ACTIVITY_UNLOCK = "activity_unlock";
+    public static final String ACTIVITY_UNLOCK_DELAY_DURATION = "activity_unlock_delay";
 
     private DevicePolicyManager mgr = null;
     private ComponentName cn = null;
@@ -71,11 +74,29 @@ public class MainActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.settings);
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
+            final Preference driveUnlockDelayPrefs = findPreference(ACTIVITY_UNLOCK_DELAY_DURATION);
+            driveUnlockDelayPrefs.setEnabled(prefs.getBoolean(ACTIVITY_UNLOCK, false));
+
+            final Preference driveUnlockPref = findPreference(ACTIVITY_UNLOCK);
+            driveUnlockPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Boolean checked = (Boolean) newValue;
+                    driveUnlockDelayPrefs.setEnabled(checked);
+                    if (checked) {
+                        getActivity().startService(new Intent(getActivity(), ActivityRecognitionAlertService.class));
+                    } else {
+                        getActivity().stopService(new Intent(getActivity(), ActivityRecognitionAlertService.class));
+                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""), UnlockType.PREF_CHANGE);
+                    }
+                    return true;
+                }
+            });
+
             findPreference(PASSWORD).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if (TextUtils.isEmpty((String) newValue)) {
-                    } else {
+                    if (!TextUtils.isEmpty((String) newValue)) {
                         Toast.makeText(getActivity(), "PIN set to " + (String) newValue, Toast.LENGTH_SHORT).show();
                     }
 
@@ -97,12 +118,12 @@ public class MainActivity extends PreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Boolean checked = (Boolean) newValue;
-                    wifipref.setEnabled((Boolean) newValue);
-                    prefs.edit().putBoolean(WIFI_UNLOCK, checked);
+                    wifipref.setEnabled(checked);
+//                    prefs.edit().putBoolean(WIFI_UNLOCK, checked);
                     if (checked) {
                         wifipref.getOnPreferenceClickListener().onPreferenceClick(wifipref);
                     } else {
-                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""));
+                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""), UnlockType.PREF_CHANGE);
                     }
 
                     return true;
@@ -124,13 +145,12 @@ public class MainActivity extends PreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Boolean checked = (Boolean) newValue;
                     btpref.setEnabled(checked);
-                    prefs.edit().putBoolean(BT_UNLOCK, checked);
-
+//                    prefs.edit().putBoolean(BT_UNLOCK, checked);
                     if (checked) {
                         getActivity().startService(new Intent(getActivity(), BluetoothMonService.class));
                         btpref.getOnPreferenceClickListener().onPreferenceClick(btpref);
                     } else {
-                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""));
+                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""), UnlockType.PREF_CHANGE);
                         getActivity().stopService(new Intent(getActivity(), BluetoothMonService.class));
                     }
 
@@ -161,22 +181,7 @@ public class MainActivity extends PreferenceActivity {
                         prefs.edit().putString((BT_ADDRESS), btAddress).commit();
 
                         Toast.makeText(getActivity(), "Safe BT defined as " + btName, Toast.LENGTH_SHORT).show();
-                        maybeUnlockUsingBt(prefs, btName);
-                }
-            }
-        }
-
-        private void maybeUnlockUsingBt(SharedPreferences prefs, String btName) {
-            final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
-            final boolean shouldUnlock = prefs.getBoolean(MainActivity.BT_UNLOCK, false);
-
-            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-                final BluetoothDevice remoteDevice = bluetoothAdapter.getRemoteDevice(prefs.getString(BT_ADDRESS, ""));
-                if (remoteDevice != null && shouldUnlock && btName.equalsIgnoreCase(remoteDevice.getName())) {
-                    Util.unSetPassword(getActivity(), disableKeyguard);
-                } else {
-                    Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""));
+                        //maybeUnlockUsingBt(prefs, btName);
                 }
             }
         }
@@ -191,9 +196,9 @@ public class MainActivity extends PreferenceActivity {
                     final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
 
                     if (safeSsid.equals(Util.getSSID(connectionInfo)) && shouldUnlock) {
-                        Util.unSetPassword(getActivity(), disableKeyguard);
+                        Util.unSetPassword(getActivity(), disableKeyguard, UnlockType.WIFI);
                     } else {
-                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""));
+                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""), UnlockType.WIFI);
                     }
                 }
             }

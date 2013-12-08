@@ -33,6 +33,18 @@
         />
 
     <CheckBoxPreference
+        android:key="activity_unlock"
+        android:title="@string/unlock_in_vehicle"
+        android:summary="@string/unlock_in_vehicle_summary" />
+
+    <EditTextPreference
+        android:key="activity_unlock_delay"
+        android:title="@string/vehicle_unlock"
+        android:inputType="number"
+        android:summary="@string/vehicle_unlock_summary"
+        />
+
+    <CheckBoxPreference
         android:key="disable_keyguard"
         android:title="@string/disable_keyguard_title"
         android:summaryOn="@string/disable_keyguard_summary"

@@ -56,5 +56,11 @@
     </string>
     <string name="wifi_setup">WiFi Setup</string>
     <string name="pair">Pair</string>
+    <string name="bt_unlock_enabled">Bluetooth Unlock enabled</string>
+    <string name="driving_unlock_enabled">Driving unlock enabled</string>
+    <string name="unlock_in_vehicle">Unlock in vehicle</string>
+    <string name="unlock_in_vehicle_summary">Unlock phone when it is in a moving vehicle. NOTE: Texting while driving is DANGEROUS!</string>
+    <string name="vehicle_unlock_summary">Set duration to keep phone unlocked after exiting vehicle. Handy to prevent phone lock when vehicle idles.</string>
+    <string name="vehicle_unlock">Exit vehicle delay (in minutes)</string>
 
 </resources>
