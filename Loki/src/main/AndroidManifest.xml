@@ -8,6 +8,10 @@
         android:minSdkVersion="16"
         android:targetSdkVersion="18" />
 
+    <uses-feature
+        android:required="true"
+        android:name="android.hardware.bluetooth" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
