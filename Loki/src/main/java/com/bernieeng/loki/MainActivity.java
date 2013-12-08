@@ -18,6 +18,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import java.util.List;
 
 public class MainActivity extends PreferenceActivity {
@@ -36,6 +39,7 @@ public class MainActivity extends PreferenceActivity {
     private DevicePolicyManager mgr = null;
     private ComponentName cn = null;
     private SharedPreferences prefs;
+    private static int isGooglePlayAvail = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class MainActivity extends PreferenceActivity {
         if (!mgr.isAdminActive(cn) || !prefs.contains(WIFI_NAME) || !prefs.contains(PASSWORD)) {
             Toast.makeText(this, getString(R.string.loki_disabled_warning), Toast.LENGTH_LONG).show();
         }
+
+        isGooglePlayAvail = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
     }
 
     @Override
@@ -75,23 +81,29 @@ public class MainActivity extends PreferenceActivity {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
             final Preference driveUnlockDelayPrefs = findPreference(ACTIVITY_UNLOCK_DELAY_DURATION);
-            driveUnlockDelayPrefs.setEnabled(prefs.getBoolean(ACTIVITY_UNLOCK, false));
-
             final Preference driveUnlockPref = findPreference(ACTIVITY_UNLOCK);
-            driveUnlockPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Boolean checked = (Boolean) newValue;
-                    driveUnlockDelayPrefs.setEnabled(checked);
-                    if (checked) {
-                        getActivity().startService(new Intent(getActivity(), ActivityRecognitionAlertService.class));
-                    } else {
-                        getActivity().stopService(new Intent(getActivity(), ActivityRecognitionAlertService.class));
-                        Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""), UnlockType.PREF_CHANGE);
+            if (isGooglePlayAvail == ConnectionResult.SUCCESS) {
+                driveUnlockDelayPrefs.setEnabled(prefs.getBoolean(ACTIVITY_UNLOCK, false));
+                driveUnlockPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        Boolean checked = (Boolean) newValue;
+                        driveUnlockDelayPrefs.setEnabled(checked);
+                        if (checked) {
+                            getActivity().startService(new Intent(getActivity(), ActivityRecognitionAlertService.class));
+                        } else {
+                            getActivity().stopService(new Intent(getActivity(), ActivityRecognitionAlertService.class));
+                            Util.setPassword(getActivity(), prefs.getString(PASSWORD, ""), UnlockType.PREF_CHANGE);
+                        }
+                        return true;
                     }
-                    return true;
-                }
-            });
+                });
+            } else {
+                GooglePlayServicesUtil.getErrorDialog(isGooglePlayAvail, getActivity(), 0).show();
+                driveUnlockDelayPrefs.setEnabled(false);
+                driveUnlockPref.setEnabled(false);
+                driveUnlockDelayPrefs.setSummary(getString(R.string.gplay_error_msg));
+            }
 
             findPreference(PASSWORD).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override

@@ -62,5 +62,6 @@
     <string name="unlock_in_vehicle_summary">Unlock phone when it is in a moving vehicle. NOTE: Texting while driving is DANGEROUS!</string>
     <string name="vehicle_unlock_summary">Set duration to keep phone unlocked after exiting vehicle. Handy to prevent phone lock when vehicle idles.</string>
     <string name="vehicle_unlock">Exit vehicle delay (in minutes)</string>
+    <string name="gplay_error_msg">This feature relies on Google Play Services, which is unavailable or outdated on your device</string>
 
 </resources>
