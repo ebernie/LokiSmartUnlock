@@ -66,4 +66,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:18.0.0'
     compile 'com.google.android.gms:play-services:4.0.30'
+    compile 'com.jakewharton:butterknife:4.0.1'
+    compile 'uk.co.chrisjenx.calligraphy:calligraphy:0.5.+'
+    compile 'de.greenrobot:eventbus:2.0.2'
 }

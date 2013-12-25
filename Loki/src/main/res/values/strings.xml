@@ -3,46 +3,37 @@
 
     <string name="app_name">Loki</string>
     <string name="devrice_admin_explanation">Password management rights needed to lock and unlock
-        your device.
-    </string>
+        your device.</string>
     <string name="password_enabled">Password enabled:</string>
     <string name="password_disabled">Password disabled</string>
     <string name="settings_summary">Configure Loki</string>
     <string name="settings_title">Settings</string>
     <string name="set_password_description">Enter your desired PIN. This PIN will be required to unlock your device if it is not connected to a safe network. Note that this WILL override PIN
-        set elsewhere.
-    </string>
+        set elsewhere.</string>
     <string name="set_password_title">Phone PIN</string>
     <string name="set_wifi_title">Set trusted WiFi name</string>
     <string name="set_wifi_name_description">Enter a WiFi network that you trust. When connected to
-        this device, a PIN will not be required for unlock.
-    </string>
+        this device, a PIN will not be required for unlock.</string>
     <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
-        WiFi name
-    </string>
-    <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network (experimental)
-    </string>
+        WiFi name</string>
+    <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network (experimental)</string>
     <string name="disable_keyguard_title">Disable Keyguard</string>
     <string name="admin_disabled_message">For security reasons, your device will now be locked with
-        the PIN set in Loki
-    </string>
+        the PIN set in Loki</string>
     <string name="enter_pin">Enter PIN</string>
     <string name="incorrect_pin">Incorrect PIN</string>
     <string name="disable_keyguard_summary_off">Keyguard is always shown</string>
     <string name="force_login_summary_off">Loki will run without a PIN (not secure)</string>
-    <string name="force_login_summary">Your PIN is required when launching Loki (recommended)
-    </string>
+    <string name="force_login_summary">Your PIN is required when launching Loki (recommended)</string>
     <string name="admin_explanation">Loki needs admin rights in order to lock and unlock your
-        device
-    </string>
+        device</string>
     <string name="expired_msg">This alpha/beta version of Loki has expired</string>
     <string name="expired">Expired</string>
     <string name="quit">Quit</string>
     <string name="select_wifi_network">Select a WiFi network</string>
     <string name="set_bt_name_description">Enter a Bluetooth device that you trust. When connected
         to
-        this device, a PIN will not be required for unlock.
-    </string>
+        this device, a PIN will not be required for unlock.</string>
     <string name="set_bt_name">Set trusted Bluetooth device name</string>
     <string name="bt_unlock">Bluetooth unlock enabled</string>
     <string name="launch_loki">Launch Loki</string>
@@ -52,8 +43,7 @@
     <string name="bt_unlock_title">Enable Bluetooth unlocking</string>
     <string name="select_bt">Pick a paired Bluetooth device</string>
     <string name="no_wifi_networks_configured">No WiFi networks configured. Run this setup again
-        when you\'ve connected to your safe WiFi network
-    </string>
+        when you\'ve connected to your safe WiFi network</string>
     <string name="wifi_setup">WiFi Setup</string>
     <string name="pair">Pair</string>
     <string name="bt_unlock_enabled">Bluetooth Unlock enabled</string>
@@ -63,5 +53,17 @@
     <string name="vehicle_unlock_summary">Set duration to keep phone unlocked after exiting vehicle. Handy to prevent phone lock when vehicle idles.</string>
     <string name="vehicle_unlock">Exit vehicle delay (in minutes)</string>
     <string name="gplay_error_msg">This feature relies on Google Play Services, which is unavailable or outdated on your device</string>
-
+    <string name="title_activity_setup_pin">SetupPinActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_setup_wizard">SetupWizardActivity</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="prev">Previous</string>
+    <string name="review">Review</string>
+    <string name="finish">Finish</string>
+    <string name="submit_confirm_message">Place the order with the deli? You will receive an email
+        confirmation.</string>
+    <string name="submit_confirm_button">Place order</string>
+    <string name="welcome_to_loki">Welcome to Loki! Please setup a passcode that\'ll be used to secure your phone.</string>
+    <string name="setup">Setup</string>
 </resources>
