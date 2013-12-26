@@ -9,10 +9,16 @@ public class Unlock {
 
     private final UnlockType type;
     private final String name;
+    private final String key;
 
-    public Unlock(UnlockType type, String name) {
+    public Unlock(UnlockType type, String name, String key) {
         this.type = type;
         this.name = name;
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public UnlockType getType() {
@@ -28,6 +34,7 @@ public class Unlock {
         return "Unlock{" +
                 "type=" + type +
                 ", name='" + name + '\'' +
+                ", key='" + key + '\'' +
                 '}';
     }
 }

@@ -94,6 +94,9 @@ public class HomeActivity extends FragmentActivity {
      */
     public static class UnlockListFragment extends ListFragment {
 
+        private SharedPreferences preferences = null;
+        private List<Unlock> unlockList;
+
         public UnlockListFragment() {
         }
 
@@ -102,6 +105,7 @@ public class HomeActivity extends FragmentActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_home, container, false);
             ButterKnife.inject(this, rootView);
+            preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             return rootView;
         }
 
@@ -109,9 +113,8 @@ public class HomeActivity extends FragmentActivity {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
 
-            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
             final Set<String> keys = preferences.getStringSet(LokiWizardModel.PREF_KEYS, null);
-            List<Unlock> unlockList = new ArrayList<Unlock>();
+            unlockList = new ArrayList<Unlock>();
             if (keys != null) {
                 for (String key : keys) {
                     try {
@@ -134,11 +137,11 @@ public class HomeActivity extends FragmentActivity {
 
         private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
             if (prefKey.contains(getString(R.string.title_bt_unlock))) {
-                target.add(new Unlock(UnlockType.BLUETOOTH, unlockName));
+                target.add(new Unlock(UnlockType.BLUETOOTH, unlockName, prefKey));
             } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
-                target.add(new Unlock(UnlockType.WIFI, unlockName));
+                target.add(new Unlock(UnlockType.WIFI, unlockName, prefKey));
             } else if (prefKey.contains(getString(R.string.title_vehicle_unlock))) {
-                target.add(new Unlock(UnlockType.ACTIVITY, unlockName));
+                target.add(new Unlock(UnlockType.ACTIVITY, unlockName, prefKey));
             }
         }
 
@@ -156,6 +159,22 @@ public class HomeActivity extends FragmentActivity {
                 public void onClick(View v) {
                     int position = getListView().getPositionForView(v);
                     Toast.makeText(context, "Selected position: " + position, Toast.LENGTH_SHORT).show();
+                    unlockList.remove(getListAdapter().getItem(position));
+                    setListAdapter(new UnlockListAdapter(unlockList, context));
+                    final Unlock unlock = (Unlock) items.get(position);
+                    try {
+                        //test if this is a StringSet or just a String
+                        preferences.getString(unlock.getKey(), null);
+                        preferences.edit().remove(unlock.getKey()).commit();
+
+                    } catch (ClassCastException e) {
+                        //Oops it's a StringSet
+                        final Set<String> stringSet = preferences.getStringSet(unlock.getKey(), null);
+                        if (stringSet != null) {
+                            stringSet.remove(unlock.getName());
+                            preferences.edit().putStringSet(unlock.getKey(), stringSet);
+                        }
+                    }
                 }
             };
 
