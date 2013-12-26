@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="loki" parent="android:Theme.Holo.Light.DarkActionBar">
+
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+
+        <item name="android:editTextStyle">@style/EditTextloki</item>
+
+        <item name="android:checkboxStyle">@style/CheckBoxloki</item>
+
+        <item name="android:radioButtonStyle">@style/RadioButtonloki</item>
+
+        <item name="android:buttonStyle">@style/Buttonloki</item>
+
+        <item name="android:imageButtonStyle">@style/ImageButtonloki</item>
+
+        <item name="android:spinnerStyle">@style/Spinnerloki</item>
+
+        <item name="android:dropDownSpinnerStyle">@style/Spinnerloki.DropDown</item>
+
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemloki</item>
+
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarloki</item>
+
+        <item name="android:seekBarStyle">@style/SeekBarloki</item>
+
+        <item name="android:buttonStyleToggle">@style/Toggleloki</item>
+
+        <item name="android:listViewStyle">@style/ListViewloki</item>
+
+        <item name="android:listViewWhiteStyle">@style/ListViewloki.White</item>
+
+        <item name="android:spinnerItemStyle">@style/SpinnerItemloki</item>
+
+    </style>
+
+</resources>

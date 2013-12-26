@@ -61,9 +61,12 @@
     <string name="prev">Previous</string>
     <string name="review">Review</string>
     <string name="finish">Finish</string>
-    <string name="submit_confirm_message">Place the order with the deli? You will receive an email
-        confirmation.</string>
-    <string name="submit_confirm_button">Place order</string>
+    <string name="submit_confirm_message">You\'ve setup Loki! You can always change your unlocks via Settings.</string>
+    <string name="submit_confirm_button">Okay</string>
     <string name="welcome_to_loki">Welcome to Loki! Please setup a passcode that\'ll be used to secure your phone.</string>
     <string name="setup">Setup</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="wifi_network">wifi network</string>
+
 </resources>

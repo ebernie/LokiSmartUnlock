@@ -48,7 +48,9 @@ public class LokiWizardModel extends AbstractWizardModel {
         pageList.add(new PinSetupPage(this, "PIN setup").setRequired(true));
 
         MultipleFixedChoicePage wifiPage = buildWiFiPage(context);
-        pageList.add(wifiPage);
+        if (wifiPage != null) {
+            pageList.add(wifiPage);
+        }
 
         final MultipleFixedChoicePage btPage = buildBluetoothPage();
         if (btPage != null) {
@@ -96,7 +98,9 @@ public class LokiWizardModel extends AbstractWizardModel {
                 configuredNetworkNames.add(Util.escapeSSID(configuration.SSID));
             }
             wifiPage.setChoices(configuredNetworkNames);
+            return wifiPage;
+        } else {
+            return null;
         }
-        return wifiPage;
     }
 }

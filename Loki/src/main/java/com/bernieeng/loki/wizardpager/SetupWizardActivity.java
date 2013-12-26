@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bernieeng.loki.HomeActivity;
 import com.bernieeng.loki.R;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.ModelCallbacks;
@@ -97,14 +100,23 @@ public class SetupWizardActivity extends FragmentActivity implements
                     DialogFragment dg = new DialogFragment() {
                         @Override
                         public Dialog onCreateDialog(Bundle savedInstanceState) {
-                            return new AlertDialog.Builder(getActivity())
+                            final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.submit_confirm_message)
-                                    .setPositiveButton(R.string.submit_confirm_button, null)
+                                    .setPositiveButton(R.string.submit_confirm_button, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            SetupWizardActivity.this.finish();
+                                            //start list activity
+                                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                        }
+                                    })
                                     .setNegativeButton(android.R.string.cancel, null)
                                     .create();
+                            return alertDialog;
                         }
                     };
-                    dg.show(getFragmentManager(), "place_order_dialog");
+                    dg.show(getFragmentManager(), "loki_setup_dialog");
                 } else {
                     if (mEditingAfterReview) {
                         mPager.setCurrentItem(mPagerAdapter.getCount() - 1);
