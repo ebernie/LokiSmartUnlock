@@ -1,9 +1,13 @@
 package com.bernieeng.loki;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bernieeng.loki.model.Unlock;
+import com.bernieeng.loki.wizardpager.LokiWizardModel;
+import com.bernieeng.loki.wizardpager.SetupWizardActivity;
 import com.google.common.collect.HashMultimap;
 
 import java.util.ArrayList;
@@ -37,7 +43,12 @@ public class HomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Regular.ttf");
         setContentView(R.layout.activity_home);
-        getActionBar().setTitle(R.string.app_name);
+
+        if (!PreferenceManager.getDefaultSharedPreferences(this).contains(LokiWizardModel.PREF_KEYS)) {
+            startActivity(new Intent(this, SetupWizardActivity.class));
+            this.finish();
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new UnlockListFragment())
@@ -67,6 +78,7 @@ public class HomeActivity extends FragmentActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            startActivity(new Intent(getApplicationContext(), SetupWizardActivity.class));
             return true;
         }
 
@@ -96,15 +108,38 @@ public class HomeActivity extends FragmentActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            List<Unlock> unlocks = new ArrayList<Unlock>(10);
-            unlocks.add(new Unlock(UnlockType.WIFI, "WiFi 1"));
-            unlocks.add(new Unlock(UnlockType.WIFI, "WiFi 2"));
-            unlocks.add(new Unlock(UnlockType.WIFI, "WiFi 3"));
-            unlocks.add(new Unlock(UnlockType.BLUETOOTH, "BT 1"));
-            unlocks.add(new Unlock(UnlockType.BLUETOOTH, "BT 2"));
-            unlocks.add(new Unlock(UnlockType.ACTIVITY, "In-Vehicle"));
-            setListAdapter(new UnlockListAdapter(unlocks, getActivity()));
+
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final Set<String> keys = preferences.getStringSet(LokiWizardModel.PREF_KEYS, null);
+            List<Unlock> unlockList = new ArrayList<Unlock>();
+            if (keys != null) {
+                for (String key : keys) {
+                    try {
+                        String unlockPref = preferences.getString(key, null);
+                        if (!TextUtils.isEmpty(unlockPref)) {
+                            addUnlockToList(unlockList, key, unlockPref);
+                        }
+                    } catch (ClassCastException ex) {
+                        Set<String> unlocks = preferences.getStringSet(key, null);
+                        for (String unlockName : unlocks) {
+                            addUnlockToList(unlockList, key, unlockName);
+                        }
+                    }
+                }
+            }
+
+            setListAdapter(new UnlockListAdapter(unlockList, getActivity()));
             getListView().setDividerHeight(0);
+        }
+
+        private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
+            if (prefKey.contains(getString(R.string.title_bt_unlock))) {
+                target.add(new Unlock(UnlockType.BLUETOOTH, unlockName));
+            } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
+                target.add(new Unlock(UnlockType.WIFI, unlockName));
+            } else if (prefKey.contains(getString(R.string.title_vehicle_unlock))) {
+                target.add(new Unlock(UnlockType.ACTIVITY, unlockName));
+            }
         }
 
         class UnlockListAdapter extends BaseAdapter {
@@ -221,7 +256,7 @@ public class HomeActivity extends FragmentActivity {
 
             @Override
             public int getViewTypeCount() {
-                return items.size();
+                return items.size() > 0 ? items.size() : 1;
             }
 
             class HeaderViewHolder {

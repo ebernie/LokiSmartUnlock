@@ -6,7 +6,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -22,11 +24,14 @@ import com.bernieeng.loki.R;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.ModelCallbacks;
 import com.bernieeng.loki.wizardpager.model.Page;
+import com.bernieeng.loki.wizardpager.model.Persistable;
 import com.bernieeng.loki.wizardpager.ui.PageFragmentCallbacks;
 import com.bernieeng.loki.wizardpager.ui.ReviewFragment;
 import com.bernieeng.loki.wizardpager.ui.StepPagerStrip;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -106,6 +111,18 @@ public class SetupWizardActivity extends FragmentActivity implements
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
+                                            final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                            final SharedPreferences.Editor edit = pref.edit();
+                                            Set<String> keys = new HashSet<String>();
+                                            for (Page page : mWizardModel.getCurrentPageSequence()) {
+                                                // save all data from review items
+                                                if (page instanceof Persistable) {
+                                                    ((Persistable)page).persistInPref(pref.edit());
+                                                    //save all titles so that we can retrieve data later
+                                                    keys.add(page.getKey());
+                                                }
+                                            }
+                                            edit.putStringSet(LokiWizardModel.PREF_KEYS, keys).commit();
                                             SetupWizardActivity.this.finish();
                                             //start list activity
                                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
@@ -136,6 +153,7 @@ public class SetupWizardActivity extends FragmentActivity implements
 
         onPageTreeChanged();
         updateBottomBar();
+
     }
 
     @Override
@@ -262,8 +280,6 @@ public class SetupWizardActivity extends FragmentActivity implements
             if (i >= mCurrentPageSequence.size()) {
                 return new ReviewFragment();
             }
-//            final Page page =
-//            EventBus.getDefault().postSticky(new CurrentPageSticky(page.getKey()));
             return mCurrentPageSequence.get(i).createFragment();
         }
 

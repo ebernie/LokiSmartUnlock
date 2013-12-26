@@ -68,5 +68,9 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="wifi_network">wifi network</string>
+    <string name="title_pin_setup">PIN setup</string>
+    <string name="title_vehicle_unlock">In-vehicle unlock</string>
+    <string name="title_bt_unlock">Choose safe device</string>
+    <string name="title_wifi_unlock">Choose safe network</string>
 
 </resources>

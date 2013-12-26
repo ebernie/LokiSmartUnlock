@@ -16,6 +16,7 @@
 
 package com.bernieeng.loki.wizardpager.model;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
@@ -27,7 +28,8 @@ import java.util.Arrays;
 /**
  * A page offering the user a number of mutually exclusive choices.
  */
-public class SingleFixedChoicePage extends Page {
+public class SingleFixedChoicePage extends Page implements Persistable {
+
     protected ArrayList<String> mChoices = new ArrayList<String>();
 
     public SingleFixedChoicePage(ModelCallbacks callbacks, String title) {
@@ -70,5 +72,10 @@ public class SingleFixedChoicePage extends Page {
     public SingleFixedChoicePage setValue(String value) {
         mData.putString(SIMPLE_DATA_KEY, value);
         return this;
+    }
+
+    @Override
+    public void persistInPref(SharedPreferences.Editor editor) {
+        editor.putString(getKey(), mData.getString(SIMPLE_DATA_KEY)).commit();
     }
 }

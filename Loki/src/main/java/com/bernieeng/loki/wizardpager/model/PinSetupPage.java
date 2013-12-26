@@ -1,5 +1,6 @@
 package com.bernieeng.loki.wizardpager.model;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by ebernie on 12/23/13.
  */
-public class PinSetupPage extends Page {
+public class PinSetupPage extends Page implements Persistable {
 
     public static final String PIN_DATA_KEY = "pin";
 
@@ -31,5 +32,10 @@ public class PinSetupPage extends Page {
     @Override
     public boolean isCompleted() {
         return !TextUtils.isEmpty(mData.getString(PIN_DATA_KEY));
+    }
+
+    @Override
+    public void persistInPref(SharedPreferences.Editor editor) {
+        editor.putString(getKey(), mData.getString(PIN_DATA_KEY)).commit();
     }
 }

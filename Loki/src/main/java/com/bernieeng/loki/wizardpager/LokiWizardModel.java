@@ -23,6 +23,7 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 
+import com.bernieeng.loki.R;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.MultipleFixedChoicePage;
@@ -37,6 +38,8 @@ import java.util.Set;
 
 public class LokiWizardModel extends AbstractWizardModel {
 
+    public static final String PREF_KEYS = "drive";
+
     public LokiWizardModel(Context context) {
         super(context);
     }
@@ -45,7 +48,7 @@ public class LokiWizardModel extends AbstractWizardModel {
     protected PageList onNewRootPageList(Context context) {
 
         PageList pageList = new PageList();
-        pageList.add(new PinSetupPage(this, "PIN setup").setRequired(true));
+        pageList.add(new PinSetupPage(this, context.getString(R.string.title_pin_setup)).setRequired(true));
 
         MultipleFixedChoicePage wifiPage = buildWiFiPage(context);
         if (wifiPage != null) {
@@ -57,7 +60,7 @@ public class LokiWizardModel extends AbstractWizardModel {
             pageList.add(btPage);
         }
 
-        pageList.add(new SingleFixedChoicePage(this, "In-vehicle unlock").setChoices("Enable in-vehicle unlock", "Disable in-vehicle unlock").setRequired(true));
+        pageList.add(new SingleFixedChoicePage(this, context.getString(R.string.title_vehicle_unlock)).setChoices("Enable in-vehicle unlock", "Disable in-vehicle unlock").setRequired(true));
 
         return pageList;
     }
@@ -69,7 +72,7 @@ public class LokiWizardModel extends AbstractWizardModel {
         if (bluetoothAdapter == null) {
             return null;
         }
-        MultipleFixedChoicePage btPage = new MultipleFixedChoicePage(this, "Choose safe device");
+        MultipleFixedChoicePage btPage = new MultipleFixedChoicePage(this, mContext.getString(R.string.title_bt_unlock));
         Set<BluetoothDevice> pairedDevices
                 = bluetoothAdapter.getBondedDevices();
         if (pairedDevices != null && !pairedDevices.isEmpty()) {
@@ -77,9 +80,9 @@ public class LokiWizardModel extends AbstractWizardModel {
             final Iterator<BluetoothDevice> iterator = pairedDevices.iterator();
             while (iterator.hasNext()) {
                 final BluetoothDevice device = iterator.next();
-                StringBuilder sb = new StringBuilder(device.getName());
-                sb.append("(").append(device.getAddress()).append(")");
-                pairedBluetoothDevices.add(sb.toString());
+//                StringBuilder sb = new StringBuilder(device.getName());
+//                sb.append("(").append(device.getAddress()).append(")");
+                pairedBluetoothDevices.add(device.getName());
             }
             btPage.setChoices(pairedBluetoothDevices);
         }
@@ -87,7 +90,7 @@ public class LokiWizardModel extends AbstractWizardModel {
     }
 
     private MultipleFixedChoicePage buildWiFiPage(Context context) {
-        MultipleFixedChoicePage wifiPage = new MultipleFixedChoicePage(this, "Choose safe network");
+        MultipleFixedChoicePage wifiPage = new MultipleFixedChoicePage(this, context.getString(R.string.title_wifi_unlock));
         WifiManager wifiManager = (WifiManager) context
                 .getSystemService(Service.WIFI_SERVICE);
         final List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();

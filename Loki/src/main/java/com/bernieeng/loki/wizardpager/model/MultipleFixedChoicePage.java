@@ -17,16 +17,19 @@
 package com.bernieeng.loki.wizardpager.model;
 
 
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 
 import com.bernieeng.loki.wizardpager.ui.MultipleChoiceFragment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * A page offering the user a number of non-mutually exclusive choices.
  */
-public class MultipleFixedChoicePage extends SingleFixedChoicePage {
+public class MultipleFixedChoicePage extends SingleFixedChoicePage implements Persistable {
+
     public MultipleFixedChoicePage(ModelCallbacks callbacks, String title) {
         super(callbacks, title);
     }
@@ -57,5 +60,10 @@ public class MultipleFixedChoicePage extends SingleFixedChoicePage {
     public boolean isCompleted() {
         ArrayList<String> selections = mData.getStringArrayList(SIMPLE_DATA_KEY);
         return selections != null && selections.size() > 0;
+    }
+
+    @Override
+    public void persistInPref(SharedPreferences.Editor editor) {
+        editor.putStringSet(getKey(), new HashSet<String>(mData.getStringArrayList(SIMPLE_DATA_KEY))).commit();
     }
 }
