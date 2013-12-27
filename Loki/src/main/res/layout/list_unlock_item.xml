@@ -5,11 +5,9 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:paddingLeft="@dimen/list_item_padding"
         android:id="@+id/img_unlockSymbol"
         android:src="@drawable/ic_launcher"
         style="@style/ImageUnlockItem"
-        android:layout_centerVertical="true"
         />
 
     <TextView

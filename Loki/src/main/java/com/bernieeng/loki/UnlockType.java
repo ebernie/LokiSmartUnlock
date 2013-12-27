@@ -5,6 +5,15 @@ package com.bernieeng.loki;
  */
 public enum UnlockType {
 
-    BLUETOOTH, WIFI, ACTIVITY, PREF_CHANGE;
+    BLUETOOTH("BLUETOOTH"), WIFI("WIFI"), ACTIVITY("ACTIVITY"), PREF_CHANGE("PREF_CHANGE");
 
+    private final String value;
+
+    UnlockType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

@@ -11,11 +11,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +31,7 @@ import com.google.common.collect.HashMultimap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -81,21 +87,25 @@ public class HomeActivity extends FragmentActivity {
             startActivity(new Intent(getApplicationContext(), SetupWizardActivity.class));
             return true;
         }
-
-        if (id == R.id.action_add) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class UnlockListFragment extends ListFragment {
 
+        private static final int MOVE_DURATION = 150;
+        private static final int SWIPE_DURATION = 250;
+
+        /**
+         * A placeholder fragment containing a simple view.
+         */
+        @InjectView(R.id.listViewBackground)
+        BackgroundContainer mBackgroundContainer;
+
         private SharedPreferences preferences = null;
-        private List<Unlock> unlockList;
+
+        boolean mSwiping = false;
+        boolean mItemPressed = false;
+        HashMap<Long, Integer> mItemIdTopMap = new HashMap<Long, Integer>();
 
         public UnlockListFragment() {
         }
@@ -114,7 +124,7 @@ public class HomeActivity extends FragmentActivity {
             super.onViewCreated(view, savedInstanceState);
 
             final Set<String> keys = preferences.getStringSet(LokiWizardModel.PREF_KEYS, null);
-            unlockList = new ArrayList<Unlock>();
+            List<Unlock> unlockList = new ArrayList<Unlock>();
             if (keys != null) {
                 for (String key : keys) {
                     try {
@@ -131,8 +141,29 @@ public class HomeActivity extends FragmentActivity {
                 }
             }
 
-            setListAdapter(new UnlockListAdapter(unlockList, getActivity()));
+            setListAdapter(new UnlockListAdapter(unlockList, getActivity(), mTouchListener, R.layout.list_unlock_item));
             getListView().setDividerHeight(0);
+            getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    UnlockListAdapter adapter = (UnlockListAdapter) adapterView.getAdapter();
+                    if (adapter.isFooter(position)) {
+                        final UnlockType unlockType = UnlockType.valueOf((String) adapter.getItem(position));
+                        switch (unlockType) {
+                            case WIFI:
+                                //TODO launch wifi
+                                Toast.makeText(getActivity(), "Add more wifi?", Toast.LENGTH_SHORT).show();
+                                break;
+                            case BLUETOOTH:
+                                //TODO launch bluetooth
+                                Toast.makeText(getActivity(), "Add more bluetooth?", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                //do nothing
+                        }
+                    }
+                }
+            });
         }
 
         private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
@@ -145,44 +176,40 @@ public class HomeActivity extends FragmentActivity {
             }
         }
 
-        class UnlockListAdapter extends BaseAdapter {
+        class UnlockListAdapter extends ArrayAdapter {
 
             private final Set<Integer> HEADER_POSITIONS = new HashSet<Integer>();
+            private final Set<Integer> FOOTER_POSITIONS = new HashSet<Integer>();
             private List items = new ArrayList();
-            private final int VIEW_TYPE_HEADER = 1;
-            private final int VIEW_TYPE_ITEM = 2;
-            private final int VIEW_TYPE_BOOLEAN_LOCK = 3;
+            private final int VIEW_TYPE_HEADER = 0;
+            private final int VIEW_TYPE_ITEM = 1;
+            private final int VIEW_TYPE_ADD = 2;
+            HashMap<Object, Integer> mIdMap = new HashMap<Object, Integer>();
+            View.OnTouchListener mTouchListener;
 
             private final View.OnClickListener removeClickListener = new View.OnClickListener () {
 
                 @Override
                 public void onClick(View v) {
                     int position = getListView().getPositionForView(v);
-                    Toast.makeText(context, "Selected position: " + position, Toast.LENGTH_SHORT).show();
-                    unlockList.remove(getListAdapter().getItem(position));
-                    setListAdapter(new UnlockListAdapter(unlockList, context));
-                    final Unlock unlock = (Unlock) items.get(position);
-                    try {
-                        //test if this is a StringSet or just a String
-                        preferences.getString(unlock.getKey(), null);
-                        preferences.edit().remove(unlock.getKey()).commit();
-
-                    } catch (ClassCastException e) {
-                        //Oops it's a StringSet
-                        final Set<String> stringSet = preferences.getStringSet(unlock.getKey(), null);
-                        if (stringSet != null) {
-                            stringSet.remove(unlock.getName());
-                            preferences.edit().putStringSet(unlock.getKey(), stringSet);
-                        }
-                    }
+                    removeFromPreference(position);
+//                    ((UnlockListAdapter)getListAdapter()).remove(getListAdapter().getItem(position));
+                    //this will actually remove the item from the adapter too
+                    animateRemoval(getListView(), v);
                 }
             };
 
-
             private final Context context;
 
-            public UnlockListAdapter(List<Unlock> unlocks, Context context) {
+            public boolean isFooter(int position) {
+                return FOOTER_POSITIONS.contains(position);
+            }
+
+            public UnlockListAdapter(List<Unlock> unlocks, Context context, View.OnTouchListener listener, int resId) {
+                super(context, resId, unlocks);
                 this.context = context;
+                this.mTouchListener = listener;
+
                 /*
                     wifi -> wifi1, wifi2, wifi3
                     bt -> bt1, bt2, bt3
@@ -200,13 +227,21 @@ public class HomeActivity extends FragmentActivity {
                 while (iterator.hasNext()) {
                     // for each type, we get all unlocks
                     final UnlockType key = iterator.next();
-                    final int size = unlockTypeToUnlockMap.get(key).size();
                     /*
-                    items: wifi,wifi1,wifi2,wifi3,bt,bt1,bt2,bt3
+                    items: wifi_header,wifi1,wifi2,wifi3,bt_header,bt1,bt2,bt3
                      */
                     this.items.add(key);
                     this.items.addAll(Arrays.asList(unlockTypeToUnlockMap.get(key).toArray()));
                     HEADER_POSITIONS.add(items.indexOf(key));
+                    // for BT and WiFi, we allow a 'footer' to add more
+                    if (UnlockType.BLUETOOTH.equals(key) || UnlockType.WIFI.equals(key)) {
+                        this.items.add(key.getValue());
+                        FOOTER_POSITIONS.add(items.indexOf(key.getValue()));
+                    }
+                }
+
+                for (int i = 0; i < this.items.size(); ++i) {
+                    mIdMap.put(this.items.get(i), i);
                 }
             }
 
@@ -221,8 +256,36 @@ public class HomeActivity extends FragmentActivity {
             }
 
             @Override
+            public boolean hasStableIds() {
+                return true;
+            }
+
+            @Override
             public long getItemId(int position) {
-                return position;
+                Object item = getItem(position);
+                return mIdMap.get(item);
+            }
+
+            @Override
+            public void remove(Object object) {
+                super.remove(object);
+
+                //remove
+                items.remove(object);
+
+                //recalculate header & footer positions
+                HEADER_POSITIONS.clear();
+                FOOTER_POSITIONS.clear();
+                for (int i = 0; i < items.size(); i++) {
+                    Object obj = items.get(i);
+                    if (obj instanceof UnlockType) {
+                        HEADER_POSITIONS.add(i);
+                    } else if (obj instanceof String) {
+                        FOOTER_POSITIONS.add(i);
+                    }
+                }
+
+                notifyDataSetChanged();
             }
 
             @Override
@@ -246,6 +309,7 @@ public class HomeActivity extends FragmentActivity {
                             convertView = LayoutInflater.from(context).inflate(R.layout.list_unlock_item, null);
                             UnlockViewHolder unlockViewHolder = new UnlockViewHolder(convertView);
                             convertView.setTag(unlockViewHolder);
+                            convertView.setOnTouchListener(mTouchListener);
                         }
                         UnlockViewHolder unlockViewHolder = (UnlockViewHolder) convertView.getTag();
                         unlockViewHolder.unlockName.setText(unlock.getName());
@@ -257,11 +321,12 @@ public class HomeActivity extends FragmentActivity {
                         } else {
                             unlockViewHolder.unlockSymbol.setImageResource(R.drawable.ic_action_car);
                         }
-                        if (HEADER_POSITIONS.contains(position + 1) || position == items.size() - 1) {
-                            unlockViewHolder.divider.setVisibility(View.INVISIBLE);
-                        }
+
                         return convertView;
-                    case VIEW_TYPE_BOOLEAN_LOCK:
+                    case VIEW_TYPE_ADD:
+                        if (convertView == null) {
+                            convertView = LayoutInflater.from(context).inflate(R.layout.list_unlock_footer, null);
+                        }
                         return convertView;
                 }
 
@@ -270,12 +335,18 @@ public class HomeActivity extends FragmentActivity {
 
             @Override
             public int getItemViewType(int position) {
-                return HEADER_POSITIONS.contains(position) ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM;
+                if (HEADER_POSITIONS.contains(position)) {
+                    return VIEW_TYPE_HEADER;
+                } else if (FOOTER_POSITIONS.contains(position)) {
+                    return VIEW_TYPE_ADD;
+                } else {
+                    return VIEW_TYPE_ITEM;
+                }
             }
 
             @Override
             public int getViewTypeCount() {
-                return items.size() > 0 ? items.size() : 1;
+                return 3;
             }
 
             class HeaderViewHolder {
@@ -301,6 +372,212 @@ public class HomeActivity extends FragmentActivity {
                     ButterKnife.inject(this, v);
                 }
             }
+        }
+
+        private void removeFromPreference(int position) {
+            final Unlock unlock = (Unlock) getListAdapter().getItem(position);
+            try {
+                //test if this is a StringSet or just a String
+                preferences.getString(unlock.getKey(), null);
+                preferences.edit().remove(unlock.getKey()).commit();
+
+            } catch (ClassCastException e) {
+                //Oops it's a StringSet
+                final Set<String> stringSet = preferences.getStringSet(unlock.getKey(), null);
+                if (stringSet != null) {
+                    stringSet.remove(unlock.getName());
+                    preferences.edit().putStringSet(unlock.getKey(), stringSet);
+                }
+            }
+        }
+
+        /**
+         * Handle touch events to fade/move dragged items as they are swiped out
+         */
+        private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+
+            float mDownX;
+            private int mSwipeSlop = -1;
+
+            @Override
+            public boolean onTouch(final View v, MotionEvent event) {
+
+                final ListView listView = getListView();
+
+                if (mSwipeSlop < 0) {
+                    mSwipeSlop = ViewConfiguration.get(getActivity()).
+                            getScaledTouchSlop();
+                }
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (mItemPressed) {
+                            // Multi-item swipes not handled
+                            return false;
+                        }
+                        mItemPressed = true;
+                        mDownX = event.getX();
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        v.setAlpha(1);
+                        v.setTranslationX(0);
+                        mItemPressed = false;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                    {
+                        float x = event.getX() + v.getTranslationX();
+                        float deltaX = x - mDownX;
+                        float deltaXAbs = Math.abs(deltaX);
+                        if (!mSwiping) {
+                            if (deltaXAbs > mSwipeSlop) {
+                                mSwiping = true;
+                                listView.requestDisallowInterceptTouchEvent(true);
+                                mBackgroundContainer.showBackground(v.getTop(), v.getHeight());
+                            }
+                        }
+                        if (mSwiping) {
+                            v.setTranslationX((x - mDownX));
+                            v.setAlpha(1 - deltaXAbs / v.getWidth());
+                        }
+                    }
+                    break;
+                    case MotionEvent.ACTION_UP:
+                    {
+                        // User let go - figure out whether to animate the view out, or back into place
+                        if (mSwiping) {
+                            float x = event.getX() + v.getTranslationX();
+                            float deltaX = x - mDownX;
+                            float deltaXAbs = Math.abs(deltaX);
+                            float fractionCovered;
+                            float endX;
+                            float endAlpha;
+                            final boolean remove;
+                            if (deltaXAbs > v.getWidth() / 4) {
+                                // Greater than a quarter of the width - animate it out
+                                fractionCovered = deltaXAbs / v.getWidth();
+                                endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
+                                endAlpha = 0;
+                                remove = true;
+                            } else {
+                                // Not far enough - animate it back
+                                fractionCovered = 1 - (deltaXAbs / v.getWidth());
+                                endX = 0;
+                                endAlpha = 1;
+                                remove = false;
+                            }
+                            // Animate position and alpha of swiped item
+                            // NOTE: This is a simplified version of swipe behavior, for the
+                            // purposes of this demo about animation. A real version should use
+                            // velocity (via the VelocityTracker class) to send the item off or
+                            // back at an appropriate speed.
+                            long duration = (int) ((1 - fractionCovered) * SWIPE_DURATION);
+                            listView.setEnabled(false);
+                            v.animate().setDuration(duration).
+                                    alpha(endAlpha).translationX(endX).
+                                    withEndAction(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // Restore animated values
+                                            v.setAlpha(1);
+                                            v.setTranslationX(0);
+                                            if (remove) {
+                                                removeFromPreference(listView.getPositionForView(v));
+                                                animateRemoval(listView, v);
+                                            } else {
+                                                mBackgroundContainer.hideBackground();
+                                                mSwiping = false;
+                                                listView.setEnabled(true);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    mItemPressed = false;
+                    break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        };
+
+        /**
+         * This method animates all other views in the ListView container (not including ignoreView)
+         * into their final positions. It is called after ignoreView has been removed from the
+         * adapter, but before layout has been run. The approach here is to figure out where
+         * everything is now, then allow layout to run, then figure out where everything is after
+         * layout, and then to run animations between all of those start/end positions.
+         */
+        private void animateRemoval(final ListView listview, View viewToRemove) {
+
+            final ListView mListView = getListView();
+            final UnlockListAdapter mAdapter = (UnlockListAdapter) getListAdapter();
+
+            int firstVisiblePosition = listview.getFirstVisiblePosition();
+            for (int i = 0; i < listview.getChildCount(); ++i) {
+                View child = listview.getChildAt(i);
+                if (child != viewToRemove) {
+                    int position = firstVisiblePosition + i;
+                    long itemId = mAdapter.getItemId(position);
+                    mItemIdTopMap.put(itemId, child.getTop());
+                }
+            }
+            // Delete the item from the adapter
+            int position = mListView.getPositionForView(viewToRemove);
+            mAdapter.remove(mAdapter.getItem(position));
+
+            final ViewTreeObserver observer = listview.getViewTreeObserver();
+            observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                public boolean onPreDraw() {
+                    observer.removeOnPreDrawListener(this);
+                    boolean firstAnimation = true;
+                    int firstVisiblePosition = listview.getFirstVisiblePosition();
+                    for (int i = 0; i < listview.getChildCount(); ++i) {
+                        final View child = listview.getChildAt(i);
+                        int position = firstVisiblePosition + i;
+                        long itemId = mAdapter.getItemId(position);
+                        Integer startTop = mItemIdTopMap.get(itemId);
+                        int top = child.getTop();
+                        if (startTop != null) {
+                            if (startTop != top) {
+                                int delta = startTop - top;
+                                child.setTranslationY(delta);
+                                child.animate().setDuration(MOVE_DURATION).translationY(0);
+                                if (firstAnimation) {
+                                    child.animate().withEndAction(new Runnable() {
+                                        public void run() {
+                                            mBackgroundContainer.hideBackground();
+                                            mSwiping = false;
+                                            mListView.setEnabled(true);
+                                        }
+                                    });
+                                    firstAnimation = false;
+                                }
+                            }
+                        } else {
+                            // Animate new views along with the others. The catch is that they did not
+                            // exist in the start state, so we must calculate their starting position
+                            // based on neighboring views.
+                            int childHeight = child.getHeight() + listview.getDividerHeight();
+                            startTop = top + (i > 0 ? childHeight : -childHeight);
+                            int delta = startTop - top;
+                            child.setTranslationY(delta);
+                            child.animate().setDuration(MOVE_DURATION).translationY(0);
+                            if (firstAnimation) {
+                                child.animate().withEndAction(new Runnable() {
+                                    public void run() {
+                                        mBackgroundContainer.hideBackground();
+                                        mSwiping = false;
+                                        mListView.setEnabled(true);
+                                    }
+                                });
+                                firstAnimation = false;
+                            }
+                        }
+                    }
+                    mItemIdTopMap.clear();
+                    return true;
+                }
+            });
         }
     }
 
