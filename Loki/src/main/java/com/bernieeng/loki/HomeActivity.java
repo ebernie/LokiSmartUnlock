@@ -89,6 +89,7 @@ public class HomeActivity extends FragmentActivity {
 
         if (id == R.id.action_settings) {
             startActivity(new Intent(getApplicationContext(), SetupWizardActivity.class));
+            this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
