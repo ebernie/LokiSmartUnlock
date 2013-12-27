@@ -65,12 +65,10 @@
     <string name="submit_confirm_button">Okay</string>
     <string name="welcome_to_loki">Welcome to Loki! Please setup a passcode that\'ll be used to secure your phone.</string>
     <string name="setup">Setup</string>
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="wifi_network">wifi network</string>
     <string name="title_pin_setup">PIN setup</string>
     <string name="title_vehicle_unlock">In-vehicle unlock</string>
-    <string name="title_bt_unlock">Choose safe device</string>
-    <string name="title_wifi_unlock">Choose safe network</string>
+    <string name="title_bt_unlock">Select safe device(s)</string>
+    <string name="title_wifi_unlock">Select safe network(s)</string>
 
 </resources>

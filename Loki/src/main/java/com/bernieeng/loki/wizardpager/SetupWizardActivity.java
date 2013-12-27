@@ -3,12 +3,16 @@ package com.bernieeng.loki.wizardpager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -59,6 +63,9 @@ public class SetupWizardActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Regular.ttf");
         setContentView(R.layout.activity_setup_wizard);
+
+        //check if wireless is disabled, and show appropriate dialog
+        maybePromptEnableWireless();
 
         getActionBar().setTitle(getString(R.string.setup));
         mWizardModel = new LokiWizardModel(this);
@@ -117,7 +124,7 @@ public class SetupWizardActivity extends FragmentActivity implements
                                             for (Page page : mWizardModel.getCurrentPageSequence()) {
                                                 // save all data from review items
                                                 if (page instanceof Persistable) {
-                                                    ((Persistable)page).persistInPref(pref.edit());
+                                                    ((Persistable) page).persistInPref(pref.edit());
                                                     //save all titles so that we can retrieve data later
                                                     keys.add(page.getKey());
                                                 }
@@ -154,6 +161,47 @@ public class SetupWizardActivity extends FragmentActivity implements
         onPageTreeChanged();
         updateBottomBar();
 
+    }
+
+    private void maybePromptEnableWireless() {
+        boolean wifiEnabled = false;
+        WifiManager wifiManager = (WifiManager) this
+                .getSystemService(Service.WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()) {
+            wifiEnabled = true;
+        }
+
+        //check if bt is disabled, and show appropriate dialog
+        boolean btEnabled = false;
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+            btEnabled = true;
+        }
+
+        if (!btEnabled || !wifiEnabled) {
+            // by default shows general settings page, but if only one of the two is enabled, decide which screen to show
+            String settingsAction = Settings.ACTION_SETTINGS; // general
+            if (btEnabled && !wifiEnabled) {
+                settingsAction = Settings.ACTION_WIFI_SETTINGS; // show wifi settings
+            } else if (!btEnabled && wifiEnabled) {
+                settingsAction = Settings.ACTION_BLUETOOTH_SETTINGS; // show bt settings
+            }
+
+            final Intent settingsIntent = new Intent(settingsAction);
+            DialogFragment wirelessDialog = new DialogFragment() {
+                @Override
+                public Dialog onCreateDialog(Bundle savedInstanceState) {
+                    final AlertDialog dialog = new AlertDialog.Builder(getActivity()).setMessage("Oops, you have WiFi or Bluettoth disabled. I can't proceed unless you enable them.").setNeutralButton("Settings", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(settingsIntent);
+                        }
+                    }).create();
+                    return dialog;
+                }
+            };
+            wirelessDialog.show(getFragmentManager(), "wireless_dialog_toggle");
+        }
     }
 
     @Override
