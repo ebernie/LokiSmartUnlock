@@ -189,6 +189,7 @@ public class HomeActivity extends FragmentActivity {
                 if (UnlockType.BLUETOOTH.equals(deletedUnlock.getType()) || UnlockType.WIFI.equals(deletedUnlock.getType())) {
                     Set<String> data = preferences.getStringSet(deletedUnlock.getKey(), null);
                     data.add(deletedUnlock.getName());
+                    edit.remove(deletedUnlock.getKey()).commit();
                     edit.putStringSet(deletedUnlock.getKey(), data).commit();
                 } else {
 //                    preferences.edit().putString(deletedUnlock.getKey(), deletedUnlock.getName()).commit();
