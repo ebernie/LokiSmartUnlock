@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -187,7 +188,7 @@ public class HomeActivity extends FragmentActivity {
             HashMap<Object, Integer> mIdMap = new HashMap<Object, Integer>();
             View.OnTouchListener mTouchListener;
 
-            private final View.OnClickListener removeClickListener = new View.OnClickListener () {
+            private final View.OnClickListener removeClickListener = new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -398,6 +399,9 @@ public class HomeActivity extends FragmentActivity {
 
             float mDownX;
             private int mSwipeSlop = -1;
+            private VelocityTracker mVelocityTracker = null;
+            private int mMinFlingVelocity;
+            private int mMaxFlingVelocity;
 
             @Override
             public boolean onTouch(final View v, MotionEvent event) {
@@ -405,11 +409,21 @@ public class HomeActivity extends FragmentActivity {
                 final ListView listView = getListView();
 
                 if (mSwipeSlop < 0) {
-                    mSwipeSlop = ViewConfiguration.get(getActivity()).
+                    final ViewConfiguration vc = ViewConfiguration.get(getActivity());
+                    mSwipeSlop = vc.
                             getScaledTouchSlop();
+                    mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+                    mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
                 }
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+
+                        if (mVelocityTracker == null) {
+                            mVelocityTracker = VelocityTracker.obtain();
+                        } else {
+                            mVelocityTracker.clear();
+                        }
+                        mVelocityTracker.addMovement(event);
                         if (mItemPressed) {
                             // Multi-item swipes not handled
                             return false;
@@ -422,8 +436,10 @@ public class HomeActivity extends FragmentActivity {
                         v.setTranslationX(0);
                         mItemPressed = false;
                         break;
-                    case MotionEvent.ACTION_MOVE:
-                    {
+                    case MotionEvent.ACTION_MOVE: {
+                        mVelocityTracker.addMovement(event);
+                        mVelocityTracker.computeCurrentVelocity(1000);
+
                         float x = event.getX() + v.getTranslationX();
                         float deltaX = x - mDownX;
                         float deltaXAbs = Math.abs(deltaX);
@@ -440,10 +456,14 @@ public class HomeActivity extends FragmentActivity {
                         }
                     }
                     break;
-                    case MotionEvent.ACTION_UP:
-                    {
+                    case MotionEvent.ACTION_UP: {
                         // User let go - figure out whether to animate the view out, or back into place
                         if (mSwiping) {
+                            mVelocityTracker.addMovement(event);
+                            mVelocityTracker.computeCurrentVelocity(1000);
+                            float velocityX = Math.abs(mVelocityTracker.getXVelocity());
+                            float velocityY = Math.abs(mVelocityTracker.getYVelocity());
+
                             float x = event.getX() + v.getTranslationX();
                             float deltaX = x - mDownX;
                             float deltaXAbs = Math.abs(deltaX);
@@ -457,6 +477,12 @@ public class HomeActivity extends FragmentActivity {
                                 endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
                                 endAlpha = 0;
                                 remove = true;
+                            }  else if (mMinFlingVelocity <= velocityX && velocityX <= mMaxFlingVelocity
+                                    && velocityY < velocityX) {
+                                remove = true;
+                                endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
+                                endAlpha = 0;
+                                fractionCovered = deltaXAbs / v.getWidth();
                             } else {
                                 // Not far enough - animate it back
                                 fractionCovered = 1 - (deltaXAbs / v.getWidth());
