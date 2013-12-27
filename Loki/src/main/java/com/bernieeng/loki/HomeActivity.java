@@ -425,18 +425,20 @@ public class HomeActivity extends FragmentActivity {
             deletedUnlock = (Unlock) getListAdapter().getItem(position);
             UndoBarController.show(getActivity(), deletedUnlock.getName()
                     + " deleted", this, b);
+            final SharedPreferences.Editor edit = preferences.edit();
             try {
                 //test if this is a StringSet or just a String
-                preferences.getString(deletedUnlock.getKey(), null);
-                preferences.edit().remove(deletedUnlock.getKey()).commit();
-
-            } catch (ClassCastException e) {
-                //Oops it's a StringSet
                 final Set<String> stringSet = preferences.getStringSet(deletedUnlock.getKey(), null);
                 if (stringSet != null) {
                     stringSet.remove(deletedUnlock.getName());
-                    preferences.edit().putStringSet(deletedUnlock.getKey(), stringSet).commit();
+                    edit.remove(deletedUnlock.getKey()).commit();
+                    edit.putStringSet(deletedUnlock.getKey(), stringSet).commit();
                 }
+            } catch (ClassCastException e) {
+                //oops it's a string
+                preferences.getString(deletedUnlock.getKey(), null);
+                edit.remove(deletedUnlock.getKey()).commit();
+
             }
         }
 
