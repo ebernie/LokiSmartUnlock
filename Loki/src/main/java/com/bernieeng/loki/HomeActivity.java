@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
@@ -28,10 +29,12 @@ import android.widget.Toast;
 import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.wizardpager.LokiWizardModel;
 import com.bernieeng.loki.wizardpager.SetupWizardActivity;
+import com.cocosw.undobar.UndoBarController;
 import com.google.common.collect.HashMultimap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -91,7 +94,7 @@ public class HomeActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class UnlockListFragment extends ListFragment {
+    public static class UnlockListFragment extends ListFragment implements UndoBarController.UndoListener {
 
         private static final int MOVE_DURATION = 150;
         private static final int SWIPE_DURATION = 250;
@@ -177,6 +180,24 @@ public class HomeActivity extends FragmentActivity {
             }
         }
 
+        @Override
+        public void onUndo(Parcelable token) {
+            if (token != null && deletedUnlock != null) {
+                final int position = ((Bundle) token).getInt("index");
+                final SharedPreferences.Editor edit = preferences.edit();
+                //save deleted unlock
+                if (UnlockType.BLUETOOTH.equals(deletedUnlock.getType()) || UnlockType.WIFI.equals(deletedUnlock.getType())) {
+                    Set<String> data = preferences.getStringSet(deletedUnlock.getKey(), null);
+                    data.add(deletedUnlock.getName());
+                    edit.putStringSet(deletedUnlock.getKey(), data).commit();
+                } else {
+//                    preferences.edit().putString(deletedUnlock.getKey(), deletedUnlock.getName()).commit();
+                }
+                // put it back into the list
+                ((UnlockListAdapter)getListAdapter()).insert(deletedUnlock, position);
+            }
+        }
+
         class UnlockListAdapter extends ArrayAdapter {
 
             private final Set<Integer> HEADER_POSITIONS = new HashSet<Integer>();
@@ -232,7 +253,19 @@ public class HomeActivity extends FragmentActivity {
                     items: wifi_header,wifi1,wifi2,wifi3,bt_header,bt1,bt2,bt3
                      */
                     this.items.add(key);
-                    this.items.addAll(Arrays.asList(unlockTypeToUnlockMap.get(key).toArray()));
+                    final Set<Unlock> set = unlockTypeToUnlockMap.get(key);
+                    ArrayList<Unlock> tmp = new ArrayList<Unlock>(set.size());
+                    tmp.addAll(set);
+                    Collections.sort(tmp, new Comparator<Unlock>() {
+                        @Override
+                        public int compare(Unlock lhs, Unlock rhs) {
+                            if (lhs != null && rhs != null) {
+                                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
+                            }
+                            return 0;
+                        }
+                    });
+                    this.items.addAll(tmp);
                     HEADER_POSITIONS.add(items.indexOf(key));
                     // for BT and WiFi, we allow a 'footer' to add more
                     if (UnlockType.BLUETOOTH.equals(key) || UnlockType.WIFI.equals(key)) {
@@ -268,13 +301,26 @@ public class HomeActivity extends FragmentActivity {
             }
 
             @Override
+            public void insert(Object object, int index) {
+                super.insert(object, 0);
+                //insert
+                items.add(index,object);
+                //recalculate header & footer positions
+                recalculateHeaderFooter();
+                notifyDataSetChanged();
+            }
+
+            @Override
             public void remove(Object object) {
                 super.remove(object);
-
                 //remove
                 items.remove(object);
-
                 //recalculate header & footer positions
+                recalculateHeaderFooter();
+                notifyDataSetChanged();
+            }
+
+            private void recalculateHeaderFooter() {
                 HEADER_POSITIONS.clear();
                 FOOTER_POSITIONS.clear();
                 for (int i = 0; i < items.size(); i++) {
@@ -285,8 +331,6 @@ public class HomeActivity extends FragmentActivity {
                         FOOTER_POSITIONS.add(i);
                     }
                 }
-
-                notifyDataSetChanged();
             }
 
             @Override
@@ -364,8 +408,6 @@ public class HomeActivity extends FragmentActivity {
                 TextView unlockName;
                 @InjectView(R.id.img_unlockSymbol)
                 ImageView unlockSymbol;
-                @InjectView(R.id.view_divider)
-                View divider;
                 @InjectView(R.id.btn_delete)
                 ImageButton delete;
 
@@ -375,19 +417,25 @@ public class HomeActivity extends FragmentActivity {
             }
         }
 
+        private Unlock deletedUnlock;
+
         private void removeFromPreference(int position) {
-            final Unlock unlock = (Unlock) getListAdapter().getItem(position);
+            final Bundle b = new Bundle();
+            b.putInt("index", position);
+            deletedUnlock = (Unlock) getListAdapter().getItem(position);
+            UndoBarController.show(getActivity(), deletedUnlock.getName()
+                    + " deleted", this, b);
             try {
                 //test if this is a StringSet or just a String
-                preferences.getString(unlock.getKey(), null);
-                preferences.edit().remove(unlock.getKey()).commit();
+                preferences.getString(deletedUnlock.getKey(), null);
+                preferences.edit().remove(deletedUnlock.getKey()).commit();
 
             } catch (ClassCastException e) {
                 //Oops it's a StringSet
-                final Set<String> stringSet = preferences.getStringSet(unlock.getKey(), null);
+                final Set<String> stringSet = preferences.getStringSet(deletedUnlock.getKey(), null);
                 if (stringSet != null) {
-                    stringSet.remove(unlock.getName());
-                    preferences.edit().putStringSet(unlock.getKey(), stringSet);
+                    stringSet.remove(deletedUnlock.getName());
+                    preferences.edit().putStringSet(deletedUnlock.getKey(), stringSet).commit();
                 }
             }
         }

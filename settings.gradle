@@ -1,1 +1,1 @@
-include ':Loki'
+include ':Loki',':UndoBar'
