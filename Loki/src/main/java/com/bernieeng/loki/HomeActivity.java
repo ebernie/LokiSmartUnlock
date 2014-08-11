@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.wizardpager.LokiWizardModel;
-import com.bernieeng.loki.wizardpager.SetupWizardActivity;
 import com.cocosw.undobar.UndoBarController;
 import com.google.common.collect.HashMultimap;
 
@@ -55,7 +54,7 @@ public class HomeActivity extends FragmentActivity {
         setContentView(R.layout.activity_home);
 
         if (!PreferenceManager.getDefaultSharedPreferences(this).contains(LokiWizardModel.PREF_KEYS)) {
-            startActivity(new Intent(this, SetupWizardActivity.class));
+            startActivity(new Intent(this, PreWizardSetupActivity.class));
             this.finish();
         }
 
@@ -88,8 +87,7 @@ public class HomeActivity extends FragmentActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            startActivity(new Intent(getApplicationContext(), SetupWizardActivity.class));
-            this.finish();
+            startActivity(new Intent(getApplicationContext(), PreWizardSetupActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -158,6 +156,7 @@ public class HomeActivity extends FragmentActivity {
                             case WIFI:
                                 //TODO launch wifi
                                 Toast.makeText(getActivity(), "Add more wifi?", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getActivity(), WifiSelectActivity.class));
                                 break;
                             case BLUETOOTH:
                                 //TODO launch bluetooth

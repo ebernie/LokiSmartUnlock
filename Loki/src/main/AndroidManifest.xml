@@ -51,44 +51,53 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="com.bernieeng.loki.WifiStateReceiver"
-            android:enabled="true"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.net.wifi.STATE_CHANGE" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name="com.bernieeng.loki.WifiStateReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="false" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.net.wifi.STATE_CHANGE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <service android:name="com.bernieeng.loki.BluetoothMonService" />
-        <service
-            android:name="com.bernieeng.loki.ActivityRecognitionService"
-            android:enabled="true"
-            android:exported="false" />
+        <!--<service android:name="com.bernieeng.loki.BluetoothMonService" />-->
+        <!--<service-->
+            <!--android:name="com.bernieeng.loki.ActivityRecognitionService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="false" />-->
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <service
-            android:name="com.bernieeng.loki.ActivityRecognitionAlertService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
+        <!--<service-->
+            <!--android:name="com.bernieeng.loki.ActivityRecognitionAlertService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true" >-->
+        <!--</service>-->
 
         <activity
-            android:noHistory="true"
             android:name="com.bernieeng.loki.wizardpager.SetupWizardActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:noHistory="true" >
         </activity>
         <activity
-            android:launchMode="singleTask"
             android:name="com.bernieeng.loki.HomeActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.bernieeng.loki.WifiSelectActivity"
+            android:label="@string/title_activity_wifi_select" >
+        </activity>
+        <activity
+            android:name="com.bernieeng.loki.PreWizardSetupActivity"
+            android:label="@string/title_activity_pre_wizard_setup" >
         </activity>
     </application>
 

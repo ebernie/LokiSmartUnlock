@@ -64,6 +64,13 @@
         <item name="android:layout_centerVertical">true</item>
     </style>
 
+    <style name="LokiText" parent="android:TextAppearance.Holo.Medium">
+        <item name="android:fontFamily">fonts/Roboto-Light.ttf</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/activity_vertical_margin</item>
+    </style>
+
     <style name="TextAppearanceUnlockItem" parent="android:TextAppearance.Holo.Medium">
         <item name="android:textColor">#000</item>
         <item name="android:fontFamily">fonts/Roboto-LightItalic.ttf</item>
