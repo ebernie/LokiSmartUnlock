@@ -1,5 +1,6 @@
 package com.bernieeng.loki;
 
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.Service;
 import android.app.admin.DevicePolicyManager;
@@ -221,6 +222,16 @@ public class Util {
     public static boolean isDriveUnlockEnabled(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(PREF_KEY_DRIVE_UNLOCK, false);
+    }
+
+    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

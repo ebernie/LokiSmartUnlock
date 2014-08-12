@@ -18,6 +18,7 @@ import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.BluetoothStateReceiver;
+import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.bernieeng.loki.ui.activity.MainActivity;
 import com.google.android.gms.location.DetectedActivity;
 
@@ -40,12 +41,13 @@ public class LokiService extends Service {
     private int previousActivity = DetectedActivity.STILL;
     private ActivityRecognitionScan activityRecognitionScan;
     private Set<String> unlocks = new HashSet<String>();
+    private static boolean isRunning = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        isRunning = true;
         EventBus.getDefault().register(this);
-
         btReceiver = new BluetoothStateReceiver();
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         showNotification();
@@ -59,6 +61,10 @@ public class LokiService extends Service {
         this.previousActivity = previousActivity;
     }
 
+    public boolean isServiceRunning() {
+        return isRunning;
+    }
+
     /**
      * Show a notification while this service is running.
      */
@@ -67,7 +73,7 @@ public class LokiService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 getApplicationContext(),
                 0,
-                new Intent(getApplicationContext(), MainActivity.class),
+                new Intent(getApplicationContext(), HomeActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         String deviceStatus = unlocks.isEmpty() ? getString(R.string.device_locekd) : getString(R.string.device_unlocked);

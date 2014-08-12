@@ -27,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bernieeng.loki.Util;
-import com.bernieeng.loki.receiver.BluetoothMonService;
 import com.bernieeng.loki.service.LokiService;
 import com.bernieeng.loki.ui.BackgroundContainer;
 import com.bernieeng.loki.R;
@@ -70,8 +69,9 @@ public class HomeActivity extends FragmentActivity {
                     .commit();
         }
 
-        startService(new Intent(this, LokiService.class));
-
+        if (!Util.isMyServiceRunning(this, LokiService.class)) {
+            startService(new Intent(this, LokiService.class));
+        }
     }
 
     @Override
@@ -687,5 +687,4 @@ public class HomeActivity extends FragmentActivity {
             });
         }
     }
-
 }
