@@ -95,7 +95,7 @@ public class HomeActivity extends FragmentActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_run_wizard) {
             startActivity(new Intent(getApplicationContext(), PreWizardSetupActivity.class));
             return true;
         }

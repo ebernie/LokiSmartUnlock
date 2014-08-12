@@ -13,11 +13,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.bernieeng.loki.model.UnlockType;
-import com.bernieeng.loki.ui.activity.MainActivity;
 import com.bernieeng.loki.receiver.AdminReceiver;
-import com.bernieeng.loki.wizardpager.model.PinSetupPage;
 import com.google.android.gms.location.DetectedActivity;
 
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ public class Util {
     public static final String DEF_VALUE = "";
     private static DevicePolicyManager mgr;
     private static KeyguardManager.KeyguardLock keyguardLock;
-    private static Set<UnlockType> unlocksEngaged = new HashSet<UnlockType>();
 
     private static final String PREF_KEY_SAFE_WIFI = "loki.wifi";
     private static final String PREF_KEY_SAFE_BT = "loki.bt";
@@ -64,16 +62,10 @@ public class Util {
         DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName cn = new ComponentName(context, AdminReceiver.class);
         if (mgr.isAdminActive(cn)) {
-
-            // 1. if there are any kinds of locks engaged, we assume that the user would not want to lock his phone
-            // e.g. i'm driving but disengages BT while in the car, phone should not be locked
-            // 2. if all unlocks have been removed, then any event that triggers a set password must lock the phone
-            if ((unlocksEngaged.size() == 1 && unlocksEngaged.contains(key)) || unlocksEngaged.isEmpty() || UnlockType.PREF_CHANGE == key) {
-                // locks phone
-                mgr.resetPassword(password, 0);
-            }
-            // we just remove the 'key' from list of unlocks
-            unlocksEngaged.remove(key);
+            // locks phone
+            mgr.resetPassword(password, 0);
+        } else {
+            Toast.makeText(context, "Loki lost administrative rights", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -85,7 +77,6 @@ public class Util {
 
     public static void unSetPassword(Context context, boolean disableKeyguard, UnlockType key) {
         if (settingsOkay(context)) {
-            unlocksEngaged.add(key);
             mgr.resetPassword(DEF_VALUE, 0);
             if (disableKeyguard) {
                 if (keyguardLock == null) {

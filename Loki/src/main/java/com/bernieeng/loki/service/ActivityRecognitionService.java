@@ -97,29 +97,16 @@ public class ActivityRecognitionService extends IntentService {
             int previousActivity = mBoundService.getPreviousActivity();
 
             if (activityType != previousActivity) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//                final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
-//                CountDownTimer timer = mBoundService.getTimer();
                 if (DetectedActivity.IN_VEHICLE == activityType) {
-//                    if (timer != null) {
-//                        timer.cancel();
-//                        mBoundService.setCountingDown(false);
-//                        mBoundService.setTimer(null);
-//                    }
-//                    Util.unSetPassword(getApplicationContext(), disableKeyguard, UnlockType.ACTIVITY);
                     if (Util.isDriveUnlockEnabled(this)) {
-                        EventBus.getDefault().post(new UnlockEvent(UnlockType.ACTIVITY));
+                        EventBus.getDefault().post(new UnlockEvent(UnlockType.ACTIVITY, "Driving"));
                     }
 
-//                    mBoundService.showNotification("Unlocked because " + Util.getDetectedActivityFriendlyName(activityType));
                     mBoundService.setPreviousActivity(activityType);
                 } else {
                     if (activityType != DetectedActivity.TILTING && activityType != previousActivity) {
                         mBoundService.setPreviousActivity(activityType);
-                        EventBus.getDefault().post(new LockEvent(UnlockType.ACTIVITY));
-//                        mBoundService.showNotification("Locked because exited vehicle");
-//                        final String password = prefs.getString(MainActivity.PASSWORD, "");
-//                        Util.setPassword(getApplicationContext(), password, UnlockType.ACTIVITY);
+                        EventBus.getDefault().post(new LockEvent(UnlockType.ACTIVITY, "Driving"));
                     }
                 }
             }

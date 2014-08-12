@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.bernieeng.loki.ui.activity.HomeActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/action_run_wizard"
+        android:title="@string/run_setup_wizard"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>
