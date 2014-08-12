@@ -132,9 +132,8 @@ public class HomeActivity extends FragmentActivity {
         }
 
         @Override
-        public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-
+        public void onResume() {
+            super.onResume();
             final Set<String> keys = preferences.getStringSet(LokiWizardModel.PREF_KEYS, null);
             List<Unlock> unlockList = new ArrayList<Unlock>();
             if (keys != null) {

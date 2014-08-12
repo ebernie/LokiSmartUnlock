@@ -86,5 +86,6 @@
     <string name="device_locekd">Device is currently locked</string>
     <string name="device_unlocked">Device is currently unlocked</string>
     <string name="unlock_event_occured">Device lock status updated</string>
+    <string name="save">Save</string>
 
 </resources>

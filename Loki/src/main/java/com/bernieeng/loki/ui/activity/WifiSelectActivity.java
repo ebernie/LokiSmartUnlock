@@ -1,5 +1,6 @@
 package com.bernieeng.loki.ui.activity;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
@@ -12,8 +13,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,6 +35,8 @@ import butterknife.InjectView;
 
 public class WifiSelectActivity extends FragmentActivity {
 
+    private static ArrayList<String> selectedItems = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +50,6 @@ public class WifiSelectActivity extends FragmentActivity {
                     Intent intent = new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK);
                     intent.putExtra("only_access_points", true);
                     intent.putExtra("extra_prefs_show_button_bar", true);
-//                    intent.putExtra("wifi_enable_next_on_connect", true);
                     startActivityForResult(intent, 1);
                     startActivity(intent);
                 }
@@ -56,9 +62,29 @@ public class WifiSelectActivity extends FragmentActivity {
                         .commit();
             }
         }
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("");
     }
 
-    static class WifiSelectFragment extends ListFragment {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                final Set<String> set = new HashSet<String>();
+                set.addAll(selectedItems);
+                preferences.edit().putStringSet(getString(R.string.title_wifi_unlock), set).commit();
+                finish();
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static class WifiSelectFragment extends ListFragment {
 
         @InjectView(android.R.id.title)
         TextView title;
@@ -68,7 +94,48 @@ public class WifiSelectActivity extends FragmentActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_page, container, false);
             ButterKnife.inject(this, rootView);
+            setHasOptionsMenu(true);
             return rootView;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (getListView().isItemChecked(position)) {
+                        selectedItems.add((String) parent.getItemAtPosition(position));
+                    } else {
+                        selectedItems.remove(parent.getItemAtPosition(position));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            super.onCreateOptionsMenu(menu, inflater);
+            menu.clear();
+            inflater.inflate(R.menu.wifi_select, menu);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_save_wifi:
+                    saveEntries();
+                    return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+
+        private void saveEntries() {
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final Set<String> set = new HashSet<String>();
+            set.addAll(selectedItems);
+            preferences.edit().putStringSet(getString(R.string.title_wifi_unlock), set).commit();
+            getActivity().finish();
         }
 
         @Override
@@ -97,15 +164,12 @@ public class WifiSelectActivity extends FragmentActivity {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-
-                        ArrayList<String> selectedItems = new ArrayList<String>(set.size());
+                        selectedItems = new ArrayList<String>(set.size());
                         selectedItems.addAll(set);
                         if (selectedItems == null || selectedItems.size() == 0) {
                             return;
                         }
-
                         Set<String> selectedSet = new HashSet<String>(selectedItems);
-
                         for (int i = 0; i < wifiNetworkNames.size(); i++) {
                             if (selectedSet.contains(wifiNetworkNames.get(i))) {
                                 listView.setItemChecked(i, true);
