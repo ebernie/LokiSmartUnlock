@@ -166,7 +166,7 @@ public class HomeActivity extends FragmentActivity {
                                 break;
                             case BLUETOOTH:
                                 //TODO launch bluetooth
-                                Toast.makeText(getActivity(), "Add more bluetooth?", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Coming soon", Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 //do nothing
