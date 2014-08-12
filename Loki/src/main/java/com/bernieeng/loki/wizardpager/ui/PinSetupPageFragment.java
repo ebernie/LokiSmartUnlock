@@ -27,9 +27,6 @@ public class PinSetupPageFragment extends Fragment {
     @InjectView(R.id.pin)
     EditText pinView;
 
-    @InjectView(R.id.welcome_text)
-    TextView welcomeText;
-
     private static final String ARG_KEY = "key";
     private PageFragmentCallbacks mCallbacks;
     private String mKey;
