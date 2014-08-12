@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.receiver;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -11,6 +11,9 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+
+import com.bernieeng.loki.R;
+import com.bernieeng.loki.ui.activity.MainActivity;
 
 /**
  * Created by ebernie on 9/13/13.

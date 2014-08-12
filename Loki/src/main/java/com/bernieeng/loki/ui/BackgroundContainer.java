@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.bernieeng.loki;
+package com.bernieeng.loki.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import com.bernieeng.loki.R;
 
 public class BackgroundContainer extends FrameLayout {
 

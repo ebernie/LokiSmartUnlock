@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.ui.activity;
 
 import android.app.Fragment;
 import android.app.admin.DevicePolicyManager;
@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.bernieeng.loki.R;
+import com.bernieeng.loki.Util;
+import com.bernieeng.loki.receiver.AdminReceiver;
 import com.bernieeng.loki.wizardpager.SetupWizardActivity;
 
 import butterknife.ButterKnife;

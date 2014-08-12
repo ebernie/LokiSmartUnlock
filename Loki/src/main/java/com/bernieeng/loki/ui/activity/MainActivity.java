@@ -1,8 +1,6 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.ui.activity;
 
 import android.app.admin.DevicePolicyManager;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +13,14 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.bernieeng.loki.receiver.BluetoothMonService;
+import com.bernieeng.loki.R;
+import com.bernieeng.loki.model.UnlockType;
+import com.bernieeng.loki.Util;
+import com.bernieeng.loki.receiver.AdminReceiver;
+import com.bernieeng.loki.service.ActivityRecognitionAlertService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 

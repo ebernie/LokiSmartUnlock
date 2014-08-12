@@ -14,6 +14,10 @@ import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.bernieeng.loki.model.UnlockType;
+import com.bernieeng.loki.ui.activity.MainActivity;
+import com.bernieeng.loki.receiver.AdminReceiver;
+import com.bernieeng.loki.wizardpager.model.PinSetupPage;
 import com.google.android.gms.location.DetectedActivity;
 
 import java.util.ArrayList;
@@ -31,6 +35,11 @@ public class Util {
     private static KeyguardManager.KeyguardLock keyguardLock;
     private static Set<UnlockType> unlocksEngaged = new HashSet<UnlockType>();
 
+    private static final String PREF_KEY_SAFE_WIFI = "loki.wifi";
+    private static final String PREF_KEY_SAFE_BT = "loki.bt";
+    private static final String PREF_KEY_DRIVE_UNLOCK = "loki.drive";
+    public static final String PREF_KEY_PASS_OR_PIN = "loki.pass";
+
     public static String getSSID(WifiInfo connectionInfo) {
         String ssid = null;
         if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
@@ -45,6 +54,10 @@ public class Util {
             ssid = ssid.substring(1, ssid.length() - 1);
         }
         return ssid;
+    }
+
+    public static String getPinOrPassword(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_PASS_OR_PIN, null);
     }
 
     public static void setPassword(Context context, String password, UnlockType key) {
@@ -67,8 +80,7 @@ public class Util {
     public static boolean settingsOkay(Context context) {
         mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName cn = new ComponentName(context, AdminReceiver.class);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return mgr.isAdminActive(cn) && prefs.contains(MainActivity.WIFI_NAME) && prefs.contains(MainActivity.PASSWORD);
+        return mgr.isAdminActive(cn);
     }
 
     public static void unSetPassword(Context context, boolean disableKeyguard, UnlockType key) {
@@ -147,4 +159,77 @@ public class Util {
         final ComponentName cn = new ComponentName(context, AdminReceiver.class);
         return dm.isAdminActive(cn);
     }
+
+    public static void addSafeWifi(Context context, String name) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeWifiNetworkNames = prefs.getStringSet(PREF_KEY_SAFE_WIFI, null);
+        if (safeWifiNetworkNames == null) {
+            safeWifiNetworkNames = new HashSet<String>();
+        }
+        safeWifiNetworkNames.add(name);
+        prefs.edit().putStringSet(PREF_KEY_SAFE_WIFI, safeWifiNetworkNames).commit();
+
+    }
+
+    public static void addSafeBluetooth(Context context, String name) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeBtDeviceNames = prefs.getStringSet(PREF_KEY_SAFE_BT, null);
+        if (safeBtDeviceNames == null) {
+            safeBtDeviceNames = new HashSet<String>();
+        }
+        safeBtDeviceNames.add(name);
+        prefs.edit().putStringSet(PREF_KEY_SAFE_BT, safeBtDeviceNames).commit();
+    }
+
+    public static void removeSafeBluetooth(Context context, String name) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeBtDeviceNames = prefs.getStringSet(PREF_KEY_SAFE_BT, null);
+        if (safeBtDeviceNames != null) {
+            safeBtDeviceNames.remove(name);
+            prefs.edit().putStringSet(PREF_KEY_SAFE_BT, safeBtDeviceNames).commit();
+        }
+    }
+
+    public static void removeSafeWifi(Context context, String name) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeWifiNetworkNames = prefs.getStringSet(PREF_KEY_SAFE_WIFI, null);
+        if (safeWifiNetworkNames != null) {
+            safeWifiNetworkNames.remove(name);
+            prefs.edit().putStringSet(PREF_KEY_SAFE_WIFI, safeWifiNetworkNames).commit();
+        }
+    }
+
+    public static boolean isSafeNetwork(Context context, String networkName) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeWifiNetworkNames = prefs.getStringSet(PREF_KEY_SAFE_WIFI, null);
+        if (safeWifiNetworkNames != null) {
+            return safeWifiNetworkNames.contains(networkName);
+        }
+        return false;
+    }
+
+    public static boolean isSafeBtDevice(Context context, String deviceName) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeBtDeviceNames = prefs.getStringSet(PREF_KEY_SAFE_BT, null);
+        if (safeBtDeviceNames != null) {
+            return safeBtDeviceNames.contains(deviceName);
+        }
+        return false;
+    }
+
+    public static void enableDriveUnlock(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(PREF_KEY_DRIVE_UNLOCK, true).commit();
+    }
+
+    public static void disableDriveUnlock(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(PREF_KEY_DRIVE_UNLOCK, false).commit();
+    }
+
+    public static boolean isDriveUnlockEnabled(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PREF_KEY_DRIVE_UNLOCK, false);
+    }
+
 }

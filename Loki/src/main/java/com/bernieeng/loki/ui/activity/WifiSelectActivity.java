@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.ui.activity;
 
 import android.app.AlertDialog;
 import android.app.Service;
@@ -17,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.bernieeng.loki.R;
+import com.bernieeng.loki.Util;
 
 import java.util.ArrayList;
 import java.util.HashSet;

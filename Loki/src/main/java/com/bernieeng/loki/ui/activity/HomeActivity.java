@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +26,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bernieeng.loki.Util;
+import com.bernieeng.loki.receiver.BluetoothMonService;
+import com.bernieeng.loki.service.LokiService;
+import com.bernieeng.loki.ui.BackgroundContainer;
+import com.bernieeng.loki.R;
+import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.wizardpager.LokiWizardModel;
 import com.cocosw.undobar.UndoBarController;
@@ -63,6 +69,9 @@ public class HomeActivity extends FragmentActivity {
                     .add(R.id.container, new UnlockListFragment())
                     .commit();
         }
+
+        startService(new Intent(this, LokiService.class));
+
     }
 
     @Override
@@ -154,8 +163,6 @@ public class HomeActivity extends FragmentActivity {
                         final UnlockType unlockType = UnlockType.valueOf((String) adapter.getItem(position));
                         switch (unlockType) {
                             case WIFI:
-                                //TODO launch wifi
-                                Toast.makeText(getActivity(), "Add more wifi?", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(getActivity(), WifiSelectActivity.class));
                                 break;
                             case BLUETOOTH:
@@ -173,10 +180,13 @@ public class HomeActivity extends FragmentActivity {
         private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
             if (prefKey.contains(getString(R.string.title_bt_unlock))) {
                 target.add(new Unlock(UnlockType.BLUETOOTH, unlockName, prefKey));
+                Util.addSafeBluetooth(getActivity(), unlockName);
             } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
                 target.add(new Unlock(UnlockType.WIFI, unlockName, prefKey));
+                Util.addSafeWifi(getActivity(), unlockName);
             } else if (prefKey.contains(getString(R.string.title_vehicle_unlock))) {
                 target.add(new Unlock(UnlockType.ACTIVITY, unlockName, prefKey));
+                Util.enableDriveUnlock(getActivity());
             }
         }
 
@@ -187,10 +197,21 @@ public class HomeActivity extends FragmentActivity {
                 final SharedPreferences.Editor edit = preferences.edit();
                 //save deleted unlock
                 if (UnlockType.BLUETOOTH.equals(deletedUnlock.getType()) || UnlockType.WIFI.equals(deletedUnlock.getType())) {
-                    Set<String> data = preferences.getStringSet(deletedUnlock.getKey(), null);
-                    data.add(deletedUnlock.getName());
-                    edit.remove(deletedUnlock.getKey()).commit();
-                    edit.putStringSet(deletedUnlock.getKey(), data).commit();
+                    String key = deletedUnlock.getKey();
+                    Set<String> data = preferences.getStringSet(key, null);
+                    String name = deletedUnlock.getName();
+                    data.add(name);
+                    edit.remove(key).commit();
+                    edit.putStringSet(key, data).commit();
+
+                    if (key.contains(getString(R.string.title_bt_unlock))) {
+                        Util.addSafeBluetooth(getActivity(), name);
+                    } else if (key.contains(getString(R.string.title_wifi_unlock))) {
+                        Util.addSafeWifi(getActivity(), name);
+                    } else if (key.contains(getString(R.string.title_vehicle_unlock))) {
+                        Util.enableDriveUnlock(getActivity());
+                    }
+
                 } else {
 //                    preferences.edit().putString(deletedUnlock.getKey(), deletedUnlock.getName()).commit();
                 }
@@ -434,12 +455,21 @@ public class HomeActivity extends FragmentActivity {
                     stringSet.remove(deletedUnlock.getName());
                     edit.remove(deletedUnlock.getKey()).commit();
                     edit.putStringSet(deletedUnlock.getKey(), stringSet).commit();
+
+                    if (deletedUnlock.getKey().contains(getString(R.string.title_bt_unlock))) {
+                        Util.removeSafeBluetooth(getActivity(), deletedUnlock.getName());
+                    } else if (deletedUnlock.getKey().contains(getString(R.string.title_wifi_unlock))) {
+                        Util.removeSafeWifi(getActivity(), deletedUnlock.getName());
+                    } else if (deletedUnlock.getKey().contains(getString(R.string.title_vehicle_unlock))) {
+                        Util.disableDriveUnlock(getActivity());
+                    }
+
                 }
             } catch (ClassCastException e) {
                 //oops it's a string
                 preferences.getString(deletedUnlock.getKey(), null);
                 edit.remove(deletedUnlock.getKey()).commit();
-
+                Toast.makeText(getActivity(), "Removing (handle this!) " + deletedUnlock.getKey(), Toast.LENGTH_LONG).show();
             }
         }
 

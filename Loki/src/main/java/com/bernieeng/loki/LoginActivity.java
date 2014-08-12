@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bernieeng.loki.ui.activity.MainActivity;
+
 /**
  * Created by ebernie on 9/11/13.
  */

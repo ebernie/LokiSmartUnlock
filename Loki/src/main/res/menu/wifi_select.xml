@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.bernieeng.loki.WifiSelectActivity" >
+    tools:context="com.bernieeng.loki.ui.activity.WifiSelectActivity" >
     
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"

@@ -81,5 +81,6 @@
     <string name="bt_enabled">Bluetooth enabled</string>
     <string name="enable_wifi">Enable WiFi</string>
     <string name="wifi_enabled">WiFi enabled</string>
+    <string name="loki_enabled">Loki smart unlock enabled</string>
 
 </resources>

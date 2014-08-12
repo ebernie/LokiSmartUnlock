@@ -14,7 +14,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -25,22 +24,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name="com.bernieeng.loki.LoginActivity"
-            android:label="@string/app_name"
-            android:noHistory="true"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
-        </activity>
-        <activity android:name="com.bernieeng.loki.MainActivity" />
-        <activity
-            android:name="com.bernieeng.loki.WifiListActivity"
-            android:label="@string/select_wifi_network" />
-        <activity
-            android:name="com.bernieeng.loki.BluetoothListActivity"
-            android:label="@string/select_bt" />
 
         <receiver
-            android:name="com.bernieeng.loki.AdminReceiver"
+            android:name=".receiver.AdminReceiver"
             android:description="@string/admin_explanation"
             android:permission="android.permission.BIND_DEVICE_ADMIN" >
             <meta-data
@@ -51,38 +37,34 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        <!--<receiver-->
-            <!--android:name="com.bernieeng.loki.WifiStateReceiver"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.net.wifi.STATE_CHANGE" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
+        <receiver
+            android:name="com.bernieeng.loki.receiver.WifiStateReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
 
-        <!--<service android:name="com.bernieeng.loki.BluetoothMonService" />-->
-        <!--<service-->
-            <!--android:name="com.bernieeng.loki.ActivityRecognitionService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false" />-->
+        <service android:name="com.bernieeng.loki.service.LokiService" />
+
+        <service
+            android:name="com.bernieeng.loki.service.ActivityRecognitionService"
+            android:enabled="true"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <!--<service-->
-            <!--android:name="com.bernieeng.loki.ActivityRecognitionAlertService"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true" >-->
-        <!--</service>-->
 
         <activity
             android:name="com.bernieeng.loki.wizardpager.SetupWizardActivity"
             android:label="@string/app_name"
             android:noHistory="true" >
         </activity>
+
         <activity
-            android:name="com.bernieeng.loki.HomeActivity"
+            android:name=".ui.activity.HomeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask" >
             <intent-filter>
@@ -92,11 +74,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bernieeng.loki.WifiSelectActivity"
+            android:name=".ui.activity.WifiSelectActivity"
             android:label="@string/title_activity_wifi_select" >
         </activity>
         <activity
-            android:name="com.bernieeng.loki.PreWizardSetupActivity"
+            android:name=".ui.activity.PreWizardSetupActivity"
             android:label="@string/title_activity_pre_wizard_setup" >
         </activity>
     </application>

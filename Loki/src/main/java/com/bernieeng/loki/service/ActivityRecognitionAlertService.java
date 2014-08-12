@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -6,14 +6,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
-import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
 
+import com.bernieeng.loki.ActivityRecognitionScan;
+import com.bernieeng.loki.ui.activity.MainActivity;
+import com.bernieeng.loki.R;
 import com.google.android.gms.location.DetectedActivity;
 
 public class ActivityRecognitionAlertService extends Service {

@@ -1,7 +1,5 @@
 package com.bernieeng.loki.model;
 
-import com.bernieeng.loki.UnlockType;
-
 /**
  * Created by ebernie on 12/25/13.
  */

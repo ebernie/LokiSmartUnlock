@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
+import com.bernieeng.loki.Util;
 import com.bernieeng.loki.wizardpager.ui.PinSetupPageFragment;
 
 import java.util.ArrayList;
@@ -37,5 +38,6 @@ public class PinSetupPage extends Page implements Persistable {
     @Override
     public void persistInPref(SharedPreferences.Editor editor) {
         editor.putString(getKey(), mData.getString(PIN_DATA_KEY)).commit();
+        editor.putString(Util.PREF_KEY_PASS_OR_PIN, mData.getString(PIN_DATA_KEY)).commit();
     }
 }

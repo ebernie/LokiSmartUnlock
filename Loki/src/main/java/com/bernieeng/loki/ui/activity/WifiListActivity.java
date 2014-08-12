@@ -1,8 +1,10 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.bernieeng.loki.R;
 
 /**
  * Created by ebernie on 9/11/13.

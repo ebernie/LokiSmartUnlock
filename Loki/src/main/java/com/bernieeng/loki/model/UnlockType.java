@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.model;
 
 /**
  * Created by ebernie on 12/7/13.

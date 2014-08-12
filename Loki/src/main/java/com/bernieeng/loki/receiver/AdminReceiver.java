@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.receiver;
 
 import android.app.admin.DeviceAdminReceiver;
 import android.app.admin.DevicePolicyManager;
@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.bernieeng.loki.ui.activity.MainActivity;
+import com.bernieeng.loki.R;
 
 /**
  * Created by ebernie on 9/9/13.

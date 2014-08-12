@@ -1,4 +1,4 @@
-package com.bernieeng.loki;
+package com.bernieeng.loki.service;
 
 import android.app.IntentService;
 import android.content.ComponentName;
@@ -6,19 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 
+import com.bernieeng.loki.event.LockEvent;
+import com.bernieeng.loki.event.UnlockEvent;
+import com.bernieeng.loki.ui.activity.MainActivity;
+import com.bernieeng.loki.model.UnlockType;
+import com.bernieeng.loki.Util;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
+
+import de.greenrobot.event.EventBus;
 
 public class ActivityRecognitionService extends IntentService {
 
     private static final String TAG = "Loki ActivityRecognition";
 
     private boolean mIsBound = false;
-    private ActivityRecognitionAlertService mBoundService;
+    private LokiService mBoundService;
 
     public ActivityRecognitionService() {
         super("Loki ActivityRecognitionService");
@@ -37,7 +43,7 @@ public class ActivityRecognitionService extends IntentService {
             // interact with the service.  Because we have bound to a explicit
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
-            mBoundService = ((ActivityRecognitionAlertService.LocalBinder) service).getService();
+            mBoundService = ((LokiService.LocalBinder) service).getService();
 
             // Tell the user about this for our demo.
         }
@@ -92,7 +98,7 @@ public class ActivityRecognitionService extends IntentService {
 
             if (activityType != previousActivity) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
+//                final boolean disableKeyguard = prefs.getBoolean(MainActivity.DISABLE_KEYGUARD, false);
 //                CountDownTimer timer = mBoundService.getTimer();
                 if (DetectedActivity.IN_VEHICLE == activityType) {
 //                    if (timer != null) {
@@ -100,15 +106,20 @@ public class ActivityRecognitionService extends IntentService {
 //                        mBoundService.setCountingDown(false);
 //                        mBoundService.setTimer(null);
 //                    }
-                    Util.unSetPassword(getApplicationContext(), disableKeyguard, UnlockType.ACTIVITY);
-                    mBoundService.showNotification("Unlocked because " + Util.getDetectedActivityFriendlyName(activityType));
+//                    Util.unSetPassword(getApplicationContext(), disableKeyguard, UnlockType.ACTIVITY);
+                    if (Util.isDriveUnlockEnabled(this)) {
+                        EventBus.getDefault().post(new UnlockEvent(UnlockType.ACTIVITY));
+                    }
+
+//                    mBoundService.showNotification("Unlocked because " + Util.getDetectedActivityFriendlyName(activityType));
                     mBoundService.setPreviousActivity(activityType);
                 } else {
                     if (activityType != DetectedActivity.TILTING && activityType != previousActivity) {
                         mBoundService.setPreviousActivity(activityType);
-                        mBoundService.showNotification("Locked because exited vehicle");
-                        final String password = prefs.getString(MainActivity.PASSWORD, "");
-                        Util.setPassword(getApplicationContext(), password, UnlockType.ACTIVITY);
+                        EventBus.getDefault().post(new LockEvent(UnlockType.ACTIVITY));
+//                        mBoundService.showNotification("Locked because exited vehicle");
+//                        final String password = prefs.getString(MainActivity.PASSWORD, "");
+//                        Util.setPassword(getApplicationContext(), password, UnlockType.ACTIVITY);
                     }
                 }
             }

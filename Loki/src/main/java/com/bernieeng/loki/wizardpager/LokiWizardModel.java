@@ -31,16 +31,23 @@ import java.util.ArrayList;
 public class LokiWizardModel extends AbstractWizardModel {
 
     public static final String PREF_KEYS = "drive";
+    public static final String KEY_PIN_OR_PASS = "Secure Using Password or PIN";
+    public static String KEY_BT_UNLOCK;
+    public static String KEY_WIFI_UNLOCK;
+    public static String KEY_DRIVE_UNLOCK;
 
     public LokiWizardModel(Context context) {
         super(context);
+        KEY_BT_UNLOCK = mContext.getString(R.string.title_bt_unlock);
+        KEY_WIFI_UNLOCK = mContext.getString(R.string.title_wifi_unlock);
+        KEY_DRIVE_UNLOCK = mContext.getString(R.string.title_vehicle_unlock);
     }
 
     @Override
     protected PageList onNewRootPageList(Context context) {
         PageList pageList = new PageList();
 
-        pageList.add(new SingleFixedChoicePage(this, "Secure Using Password or PIN").setChoices("PIN", "Password").setRequired(true));
+        pageList.add(new SingleFixedChoicePage(this, KEY_PIN_OR_PASS).setChoices("PIN", "Password").setRequired(true));
         pageList.add(new PinSetupPage(this, context.getString(R.string.title_pin_setup)).setRequired(true));
         MultipleFixedChoicePage wifiPage = buildWiFiPage(context);
         if (wifiPage != null) {

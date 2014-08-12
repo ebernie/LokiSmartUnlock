@@ -1,7 +1,7 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <header
-            android:fragment="com.bernieeng.loki.MainActivity$SettingsFragment"
+            android:fragment="com.bernieeng.loki.ui.activity.MainActivity$SettingsFragment"
             android:summary="@string/settings_summary"
             android:title="@string/settings_title" >
         <extra

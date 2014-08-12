@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragmentWifi"
-        android:name="com.bernieeng.loki.WifiListFragment"
+        android:name="com.bernieeng.loki.ui.fragment.WifiListFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 

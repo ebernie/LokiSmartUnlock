@@ -22,13 +22,16 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.bernieeng.loki.HomeActivity;
 import com.bernieeng.loki.R;
+import com.bernieeng.loki.Util;
+import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.ModelCallbacks;
 import com.bernieeng.loki.wizardpager.model.Page;
 import com.bernieeng.loki.wizardpager.model.Persistable;
+import com.bernieeng.loki.wizardpager.model.PinSetupPage;
 import com.bernieeng.loki.wizardpager.ui.PageFragmentCallbacks;
 import com.bernieeng.loki.wizardpager.ui.ReviewFragment;
 import com.bernieeng.loki.wizardpager.ui.StepPagerStrip;
