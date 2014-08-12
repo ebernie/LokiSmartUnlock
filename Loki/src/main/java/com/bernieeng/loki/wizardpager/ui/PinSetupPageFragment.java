@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.bernieeng.loki.R;
 import com.bernieeng.loki.wizardpager.model.Page;
@@ -25,6 +26,9 @@ public class PinSetupPageFragment extends Fragment {
 
     @InjectView(R.id.pin)
     EditText pinView;
+
+    @InjectView(R.id.welcome_text)
+    TextView welcomeText;
 
     private static final String ARG_KEY = "key";
     private PageFragmentCallbacks mCallbacks;

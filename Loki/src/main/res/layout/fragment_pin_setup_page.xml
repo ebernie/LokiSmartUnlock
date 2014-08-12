@@ -1,44 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/activity_vertical_margin"
-    >
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/welcome_text"
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/activity_vertical_margin"
-        android:text="@string/welcome_to_loki"
-        android:fontFamily="fonts/Roboto-LightItalic.ttf"
-        android:textSize="24sp"
-        />
+        android:layout_height="match_parent"
+        android:padding="@dimen/activity_vertical_margin">
 
-    <EditText
-        android:layout_gravity="center"
-        android:id="@+id/pin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:saveEnabled="false"
-        android:layout_below="@id/welcome_text"
-        android:inputType="numberPassword"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
-        android:layout_marginTop="70dp"
-        android:hint="@string/enter_pin"
-        android:layout_marginBottom="16dp" />
+        <TextView
+            android:id="@+id/welcome_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_vertical_margin"
+            android:text="@string/welcome_to_loki"
+            android:fontFamily="fonts/Roboto-LightItalic.ttf"
+            android:textSize="24sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="*The passcode entered here will override passcodes entered elsewhere in your phone."
-        android:fontFamily="fonts/Roboto-LightItalic.ttf"
-        android:padding="@dimen/activity_vertical_margin"
-        android:layout_alignParentBottom="true"
-        />
+        <EditText
+            android:layout_gravity="center"
+            android:id="@+id/pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:saveEnabled="false"
+            android:layout_below="@id/welcome_text"
+            android:inputType="numberPassword"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:layout_marginTop="70dp"
+            android:hint="@string/enter_pin"
+            android:layout_marginBottom="16dp" />
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

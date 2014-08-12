@@ -63,7 +63,7 @@
     <string name="finish">Finish</string>
     <string name="submit_confirm_message">You\'ve setup Loki! You can always change your unlocks via Settings.</string>
     <string name="submit_confirm_button">Okay</string>
-    <string name="welcome_to_loki">Welcome to Loki! Please setup a passcode that\'ll be used to secure your phone.</string>
+    <string name="welcome_to_loki">Welcome to Loki! Please setup a passcode to secure your phone.</string>
     <string name="setup">Setup</string>
     <string name="wifi_network">wifi network</string>
     <string name="title_pin_setup">PIN setup</string>
