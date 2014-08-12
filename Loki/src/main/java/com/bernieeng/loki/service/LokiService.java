@@ -9,17 +9,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import com.bernieeng.loki.ActivityRecognitionScan;
 import com.bernieeng.loki.R;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
-import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.BluetoothStateReceiver;
 import com.bernieeng.loki.ui.activity.HomeActivity;
-import com.bernieeng.loki.ui.activity.MainActivity;
 import com.google.android.gms.location.DetectedActivity;
 
 import java.util.HashSet;

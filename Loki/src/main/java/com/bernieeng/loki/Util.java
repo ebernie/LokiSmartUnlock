@@ -147,7 +147,7 @@ public class Util {
     }
 
     public static boolean isAdminRightsGranted(Context context) {
-        final DevicePolicyManager dm = (DevicePolicyManager) context.getSystemService("device_policy");
+        final DevicePolicyManager dm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         final ComponentName cn = new ComponentName(context, AdminReceiver.class);
         return dm.isAdminActive(cn);
     }

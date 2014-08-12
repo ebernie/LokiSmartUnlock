@@ -5,13 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 
 import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
-import com.bernieeng.loki.ui.activity.MainActivity;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.Util;
 import com.google.android.gms.location.ActivityRecognitionResult;
@@ -63,7 +60,7 @@ public class ActivityRecognitionService extends IntentService {
         // we know will be running in our own process (and thus won't be
         // supporting component replacement by other applications).
         bindService(new Intent(ActivityRecognitionService.this,
-                ActivityRecognitionAlertService.class), mConnection, Context.BIND_AUTO_CREATE);
+                LokiService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
 

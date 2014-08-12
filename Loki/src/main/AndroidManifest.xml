@@ -80,10 +80,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.WifiSelectActivity"
-            android:label="@string/title_activity_wifi_select" >
-        </activity>
-        <activity
             android:name=".ui.activity.PreWizardSetupActivity"
             android:label="@string/title_activity_pre_wizard_setup" >
         </activity>

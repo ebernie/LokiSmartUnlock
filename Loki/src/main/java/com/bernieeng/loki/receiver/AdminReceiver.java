@@ -4,10 +4,8 @@ import android.app.admin.DeviceAdminReceiver;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
-import com.bernieeng.loki.ui.activity.MainActivity;
+import com.bernieeng.loki.Util;
 import com.bernieeng.loki.R;
 
 /**
@@ -23,8 +21,7 @@ public class AdminReceiver extends DeviceAdminReceiver {
     @Override
     public void onDisabled(Context context, Intent intent) {
         // lock the device with set PIN if admin rights is revoked
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String password = prefs.getString(MainActivity.PASSWORD, "1234");
+        final String password = Util.getPinOrPassword(context);
         DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         mgr.resetPassword(password, 0);
         mgr.lockNow();

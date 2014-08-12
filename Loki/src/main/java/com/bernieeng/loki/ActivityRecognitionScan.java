@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.bernieeng.loki.ui.activity.MainActivity;
 import com.bernieeng.loki.service.ActivityRecognitionService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -61,7 +60,7 @@ public class ActivityRecognitionScan implements GooglePlayServicesClient.Connect
         callbackIntent = PendingIntent.getService(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final long delay = Long.valueOf(prefs.getString(MainActivity.ACTIVITY_UNLOCK_DELAY_DURATION, DEFAULT_DELAY));
+        final long delay = Long.valueOf(prefs.getString("5", DEFAULT_DELAY));
         mActivityRecognitionClient.requestActivityUpdates(60000 * delay, callbackIntent); // 0 sets it to update as fast as possible, just use this for testing!
     }
 
