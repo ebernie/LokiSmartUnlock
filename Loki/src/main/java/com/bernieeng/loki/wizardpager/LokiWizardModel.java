@@ -57,7 +57,7 @@ public class LokiWizardModel extends AbstractWizardModel {
         if (btPage != null) {
             pageList.add(btPage);
         }
-        pageList.add(new SingleFixedChoicePage(this, context.getString(R.string.title_vehicle_unlock)).setChoices("Enable in-vehicle unlock", "Disable in-vehicle unlock").setRequired(true));
+        pageList.add(new SingleFixedChoicePage(this, context.getString(R.string.title_vehicle_unlock)).setChoices("Enable in-vehicle unlock").setRequired(false));
         return pageList;
     }
 
