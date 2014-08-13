@@ -35,7 +35,7 @@ public class PreWizardSetupActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Condensed.ttf");
         setContentView(R.layout.activity_pre_wizard_setup);
-
+        getActionBar().setIcon(R.drawable.ic_launcher_white);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())

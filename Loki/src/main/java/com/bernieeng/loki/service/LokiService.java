@@ -15,6 +15,7 @@ import com.bernieeng.loki.R;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
+import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.BluetoothStateReceiver;
 import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.google.android.gms.location.DetectedActivity;
@@ -78,8 +79,9 @@ public class LokiService extends Service {
         Notification noti = new Notification.Builder(getApplicationContext())
                 .setContentTitle(getString(R.string.loki_enabled))
                 .setContentText(deviceStatus)
-                .setSmallIcon(R.drawable.ic_action_key)
+                .setSmallIcon(R.drawable.ic_launcher_white)
                 .setOngoing(true)
+                .setPriority(Notification.PRIORITY_MIN)
                 .setAutoCancel(false)
                 .setContentIntent(pendingIntent)
                 .setTicker(getString(R.string.unlock_event_occured))
@@ -136,6 +138,7 @@ public class LokiService extends Service {
         if (mNM != null) {
             mNM.cancel(NOTIFICATION);
         }
+        Util.setPassword(this, Util.getPinOrPassword(this), UnlockType.KILLED);
     }
 
     public class LocalBinder extends Binder {

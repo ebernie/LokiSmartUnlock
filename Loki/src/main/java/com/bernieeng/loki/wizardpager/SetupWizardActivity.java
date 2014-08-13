@@ -66,7 +66,7 @@ public class SetupWizardActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Regular.ttf");
         setContentView(R.layout.activity_setup_wizard);
-
+        getActionBar().setIcon(R.drawable.ic_launcher_white);
         //check if wireless is disabled, and show appropriate dialog
         maybePromptEnableWireless();
 

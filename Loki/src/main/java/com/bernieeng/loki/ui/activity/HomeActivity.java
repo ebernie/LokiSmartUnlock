@@ -57,7 +57,7 @@ public class HomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Regular.ttf");
         setContentView(R.layout.activity_home);
-
+        getActionBar().setIcon(R.drawable.ic_launcher_white);
         if (!PreferenceManager.getDefaultSharedPreferences(this).contains(LokiWizardModel.PREF_KEYS)) {
             startActivity(new Intent(this, PreWizardSetupActivity.class));
             this.finish();

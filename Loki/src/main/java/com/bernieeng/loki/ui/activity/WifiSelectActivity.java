@@ -41,6 +41,7 @@ public class WifiSelectActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_select);
+        getActionBar().setIcon(R.drawable.ic_launcher_white);
         WifiManager wifiManager = (WifiManager) this
                 .getSystemService(Service.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
