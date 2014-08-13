@@ -90,6 +90,8 @@
         <activity
             android:name="com.bernieeng.loki.ui.activity.PreWizardSetupActivity"
             android:label="@string/title_activity_pre_wizard_setup"/>
+
+        <activity android:name="com.bernieeng.loki.ui.activity.BluetoothSelectActivity" android:noHistory="true"/>
     </application>
 
 </manifest>

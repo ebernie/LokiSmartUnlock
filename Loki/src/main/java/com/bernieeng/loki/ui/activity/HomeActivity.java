@@ -1,7 +1,10 @@
 package com.bernieeng.loki.ui.activity;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -27,10 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bernieeng.loki.Util;
+import com.bernieeng.loki.model.Unlock;
+import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.service.LokiService;
 import com.bernieeng.loki.ui.BackgroundContainer;
-import com.bernieeng.loki.model.UnlockType;
-import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.wizardpager.LokiWizardModel;
 import com.cocosw.undobar.UndoBarController;
 import com.google.common.collect.HashMultimap;
@@ -51,6 +54,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class HomeActivity extends FragmentActivity {
+
+    private static BluetoothAdapter btAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +111,8 @@ public class HomeActivity extends FragmentActivity {
 
         private static final int MOVE_DURATION = 150;
         private static final int SWIPE_DURATION = 250;
+        private static final int ACTION_REQUEST_ENABLE = 1337;
+
 
         /**
          * A placeholder fragment containing a simple view.
@@ -165,8 +172,19 @@ public class HomeActivity extends FragmentActivity {
                                 startActivity(new Intent(getActivity(), WifiSelectActivity.class));
                                 break;
                             case BLUETOOTH:
-                                //TODO launch bluetooth
-                                Toast.makeText(getActivity(), "Coming soon", Toast.LENGTH_SHORT).show();
+                                btAdapter = BluetoothAdapter.getDefaultAdapter();
+                                if (btAdapter != null) {
+                                    if (btAdapter.isEnabled()) {
+                                startActivity(new Intent(getActivity(), BluetoothSelectActivity.class));
+                                    } else {
+                                        btReceiver = new BluetoothActivatedReceiver();
+                                        IntentFilter btif = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+                                        getActivity().registerReceiver(btReceiver, btif);
+                                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                        startActivityForResult(enableBtIntent, ACTION_REQUEST_ENABLE);
+                                    }
+                                }
+
                                 break;
                             default:
                                 //do nothing
@@ -174,6 +192,28 @@ public class HomeActivity extends FragmentActivity {
                     }
                 }
             });
+        }
+
+        private BluetoothActivatedReceiver btReceiver;
+        class BluetoothActivatedReceiver extends BroadcastReceiver {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (btAdapter.isEnabled()) {
+                    startActivity(new Intent(getActivity(), BluetoothSelectActivity.class));
+                }
+            }
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            if (btReceiver != null) {
+                try {
+                    getActivity().unregisterReceiver(btReceiver);
+                } catch (IllegalArgumentException ex) {
+                    // ignore when receiver not registered
+                }
+            }
         }
 
         private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
@@ -215,7 +255,7 @@ public class HomeActivity extends FragmentActivity {
 //                    preferences.edit().putString(deletedUnlock.getKey(), deletedUnlock.getName()).commit();
                 }
                 // put it back into the list
-                ((UnlockListAdapter)getListAdapter()).insert(deletedUnlock, position);
+                ((UnlockListAdapter) getListAdapter()).insert(deletedUnlock, position);
             }
         }
 
@@ -325,7 +365,7 @@ public class HomeActivity extends FragmentActivity {
             public void insert(Object object, int index) {
                 super.insert(object, 0);
                 //insert
-                items.add(index,object);
+                items.add(index, object);
                 //recalculate header & footer positions
                 recalculateHeaderFooter();
                 notifyDataSetChanged();
@@ -557,7 +597,7 @@ public class HomeActivity extends FragmentActivity {
                                 endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
                                 endAlpha = 0;
                                 remove = true;
-                            }  else if (mMinFlingVelocity <= velocityX && velocityX <= mMaxFlingVelocity
+                            } else if (mMinFlingVelocity <= velocityX && velocityX <= mMaxFlingVelocity
                                     && velocityY < velocityX) {
                                 remove = true;
                                 endX = deltaX < 0 ? -v.getWidth() : v.getWidth();
