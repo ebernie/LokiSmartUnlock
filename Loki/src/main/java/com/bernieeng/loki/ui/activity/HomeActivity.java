@@ -61,16 +61,16 @@ public class HomeActivity extends FragmentActivity {
         if (!PreferenceManager.getDefaultSharedPreferences(this).contains(LokiWizardModel.PREF_KEYS)) {
             startActivity(new Intent(this, PreWizardSetupActivity.class));
             this.finish();
-        }
+        } else {
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.container, new UnlockListFragment())
+                        .commit();
+            }
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new UnlockListFragment())
-                    .commit();
-        }
-
-        if (!Util.isMyServiceRunning(this, LokiService.class)) {
-            startService(new Intent(this, LokiService.class));
+            if (!Util.isMyServiceRunning(this, LokiService.class)) {
+                startService(new Intent(this, LokiService.class));
+            }
         }
     }
 
