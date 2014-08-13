@@ -52,6 +52,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name="com.bernieeng.loki.receiver.AppUpgradedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" android:path="com.kofikodr.loki" />
+            </intent-filter>
+        </receiver>
+
         <service android:name="com.bernieeng.loki.service.LokiService" />
 
         <service

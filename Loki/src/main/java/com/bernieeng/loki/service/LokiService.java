@@ -4,10 +4,17 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 
 import com.bernieeng.loki.ActivityRecognitionScan;
@@ -20,6 +27,7 @@ import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.google.android.gms.location.DetectedActivity;
 import com.kofikodr.loki.R;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +57,30 @@ public class LokiService extends Service {
         btReceiver = new BluetoothStateReceiver();
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         showNotification();
+
+        //check if safe wifi is connected & unlock appropriately
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (mWifi.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            String ssid = Util.getSSID(connectionInfo);
+            if (Util.isSafeNetwork(this, ssid)) {
+                onEvent(new UnlockEvent(UnlockType.WIFI, ssid));
+            }
+        }
+
+        //toggle BT since can't get a list of BT connected devices
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+            bluetoothAdapter.disable();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    bluetoothAdapter.enable();
+                }
+            }, 5000);
+        }
     }
 
     public int getPreviousActivity() {
@@ -57,10 +89,6 @@ public class LokiService extends Service {
 
     public void setPreviousActivity(int previousActivity) {
         this.previousActivity = previousActivity;
-    }
-
-    public boolean isServiceRunning() {
-        return isRunning;
     }
 
     /**
@@ -111,17 +139,13 @@ public class LokiService extends Service {
 
     public void onEvent(UnlockEvent event) {
         unlocks.add(event.toString());
-//        Toast.makeText(this, "Loki: unlocks size " + unlocks.size(), Toast.LENGTH_LONG).show();
-//        Toast.makeText(this, "Loki: Unlocking", Toast.LENGTH_LONG).show();
         Util.unSetPassword(this, false, event.getType());
         showNotification();
     }
 
     public void onEvent(LockEvent event) {
         unlocks.remove(event.toString());
-//        Toast.makeText(this, "Loki: unlocks left " + unlocks.size(), Toast.LENGTH_LONG).show();
         if (unlocks.isEmpty()) {
-//            Toast.makeText(this, "Loki: Locking & password is " + Util.getPinOrPassword(this), Toast.LENGTH_LONG).show();
             Util.setPassword(this, Util.getPinOrPassword(this), event.getType());
             showNotification();
         }
