@@ -64,6 +64,8 @@ public class MultipleFixedChoicePage extends SingleFixedChoicePage implements Pe
 
     @Override
     public void persistInPref(SharedPreferences.Editor editor) {
-        editor.putStringSet(getKey(), new HashSet<String>(mData.getStringArrayList(SIMPLE_DATA_KEY))).commit();
+        if (mData.getStringArrayList(SIMPLE_DATA_KEY) != null) {
+            editor.putStringSet(getKey(), new HashSet<String>(mData.getStringArrayList(SIMPLE_DATA_KEY))).commit();
+        }
     }
 }
