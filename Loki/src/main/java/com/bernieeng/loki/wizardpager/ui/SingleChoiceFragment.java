@@ -27,9 +27,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bernieeng.loki.R;
 import com.bernieeng.loki.wizardpager.model.Page;
 import com.bernieeng.loki.wizardpager.model.SingleFixedChoicePage;
+import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -22,7 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import com.bernieeng.loki.R;
+import com.kofikodr.loki.R;
 
 public class BackgroundContainer extends FrameLayout {
 

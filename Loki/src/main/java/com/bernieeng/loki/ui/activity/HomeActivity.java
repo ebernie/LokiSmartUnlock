@@ -29,12 +29,12 @@ import android.widget.Toast;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.service.LokiService;
 import com.bernieeng.loki.ui.BackgroundContainer;
-import com.bernieeng.loki.R;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.wizardpager.LokiWizardModel;
 import com.cocosw.undobar.UndoBarController;
 import com.google.common.collect.HashMultimap;
+import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

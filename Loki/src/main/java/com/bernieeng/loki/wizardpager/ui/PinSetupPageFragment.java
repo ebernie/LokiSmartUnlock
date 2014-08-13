@@ -9,11 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.bernieeng.loki.R;
 import com.bernieeng.loki.wizardpager.model.Page;
 import com.bernieeng.loki.wizardpager.model.PinSetupPage;
+import com.kofikodr.loki.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

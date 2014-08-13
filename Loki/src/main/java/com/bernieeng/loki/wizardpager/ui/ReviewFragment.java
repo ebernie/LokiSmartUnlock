@@ -28,11 +28,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bernieeng.loki.R;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.ModelCallbacks;
 import com.bernieeng.loki.wizardpager.model.Page;
 import com.bernieeng.loki.wizardpager.model.ReviewItem;
+import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

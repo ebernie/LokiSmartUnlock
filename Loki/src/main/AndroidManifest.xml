@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bernieeng.loki"
+    package="com.kofikodr.loki"
     android:versionCode="11"
     android:versionName="0.9.1">
 
@@ -27,7 +27,7 @@
         android:theme="@style/AppTheme">
 
         <receiver
-            android:name=".receiver.AdminReceiver"
+            android:name="com.bernieeng.loki.receiver.AdminReceiver"
             android:description="@string/admin_explanation"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
@@ -46,7 +46,7 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.BootCompletedReceiver">
+        <receiver android:name="com.bernieeng.loki.receiver.BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -69,10 +69,10 @@
             android:windowSoftInputMode="adjustResize"
             android:noHistory="true" />
 
-        <activity android:name=".ui.activity.WifiSelectActivity" />
+        <activity android:name="com.bernieeng.loki.ui.activity.WifiSelectActivity" />
 
         <activity
-            android:name=".ui.activity.HomeActivity"
+            android:name="com.bernieeng.loki.ui.activity.HomeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
@@ -81,7 +81,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.PreWizardSetupActivity"
+            android:name="com.bernieeng.loki.ui.activity.PreWizardSetupActivity"
             android:label="@string/title_activity_pre_wizard_setup"></activity>
     </application>
 

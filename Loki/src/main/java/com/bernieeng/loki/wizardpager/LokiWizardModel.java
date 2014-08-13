@@ -18,13 +18,13 @@ package com.bernieeng.loki.wizardpager;
 
 import android.content.Context;
 
-import com.bernieeng.loki.R;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.MultipleFixedChoicePage;
 import com.bernieeng.loki.wizardpager.model.PageList;
 import com.bernieeng.loki.wizardpager.model.PinSetupPage;
 import com.bernieeng.loki.wizardpager.model.SingleFixedChoicePage;
+import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
 

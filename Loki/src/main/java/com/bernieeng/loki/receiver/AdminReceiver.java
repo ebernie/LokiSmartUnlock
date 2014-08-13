@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.bernieeng.loki.Util;
-import com.bernieeng.loki.R;
+import com.kofikodr.loki.R;
 
 /**
  * Created by ebernie on 9/9/13.

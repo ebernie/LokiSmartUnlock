@@ -18,10 +18,10 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.bernieeng.loki.R;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.receiver.AdminReceiver;
 import com.bernieeng.loki.wizardpager.SetupWizardActivity;
+import com.kofikodr.loki.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
