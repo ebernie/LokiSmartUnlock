@@ -82,7 +82,7 @@
         </activity>
         <activity
             android:name="com.bernieeng.loki.ui.activity.PreWizardSetupActivity"
-            android:label="@string/title_activity_pre_wizard_setup"></activity>
+            android:label="@string/title_activity_pre_wizard_setup"/>
     </application>
 
 </manifest>

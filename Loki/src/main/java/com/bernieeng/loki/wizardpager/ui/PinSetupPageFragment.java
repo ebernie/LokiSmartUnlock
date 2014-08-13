@@ -1,6 +1,7 @@
 package com.bernieeng.loki.wizardpager.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -8,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.bernieeng.loki.wizardpager.model.Page;
@@ -39,7 +41,8 @@ public class PinSetupPageFragment extends Fragment {
         return fragment;
     }
 
-    public PinSetupPageFragment(){}
+    public PinSetupPageFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,8 +78,19 @@ public class PinSetupPageFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                mPage.getData().putString(PinSetupPage.PIN_DATA_KEY, s!=null? s.toString(): null);
+                mPage.getData().putString(PinSetupPage.PIN_DATA_KEY, s != null ? s.toString() : null);
                 mPage.notifyDataChanged();
+            }
+        });
+
+        pinView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(pinView.getWindowToken(), 0);
+                }
             }
         });
 
@@ -98,4 +112,5 @@ public class PinSetupPageFragment extends Fragment {
         super.onDetach();
         mCallbacks = null;
     }
+
 }
