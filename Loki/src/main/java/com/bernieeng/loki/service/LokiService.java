@@ -79,7 +79,7 @@ public class LokiService extends Service {
         Notification noti = new Notification.Builder(getApplicationContext())
                 .setContentTitle(getString(R.string.loki_enabled))
                 .setContentText(deviceStatus)
-                .setSmallIcon(R.drawable.ic_launcher_white)
+                .setSmallIcon(R.drawable.ic_stat_loki)
                 .setOngoing(true)
                 .setPriority(Notification.PRIORITY_MIN)
                 .setAutoCancel(false)
