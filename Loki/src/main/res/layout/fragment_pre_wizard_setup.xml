@@ -35,7 +35,7 @@
             android:paddingTop="16dp"
             android:layout_columnSpan="2"
             style="@style/LokiText"
-            android:text="Loki needs admin rights to do fancy stuff such as seting your PIN or password and unlocking your phone. " />
+            android:text="@string/welcome_text" />
 
         <TextView
             android:id="@+id/txt_admin_rights"
@@ -55,7 +55,7 @@
             android:paddingTop="32dp"
             android:layout_columnSpan="2"
             style="@style/LokiText"
-            android:text="To setup Bluetooth or WiFi unlocks, enable them now. You can disable them after setup is complete." />
+            android:text="@string/welcome_text_2" />
 
         <TextView
             android:id="@+id/txt_bt"
