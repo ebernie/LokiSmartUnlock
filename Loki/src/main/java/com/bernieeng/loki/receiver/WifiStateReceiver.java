@@ -34,11 +34,11 @@ public class WifiStateReceiver extends BroadcastReceiver {
                 }
             } else {
                 //foreign SSID, enforce password
-                EventBus.getDefault().post(new LockEvent(UnlockType.WIFI, ""));
+                EventBus.getDefault().post(new LockEvent(UnlockType.WIFI, "", false));
             }
         } else if (!networkInfo.isConnected()) {
             // Wifi is disconnected
-            EventBus.getDefault().post(new LockEvent(UnlockType.WIFI, ""));
+            EventBus.getDefault().post(new LockEvent(UnlockType.WIFI, "", false));
         }
     }
 }

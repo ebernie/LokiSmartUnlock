@@ -30,7 +30,7 @@ public class BluetoothStateReceiver extends BroadcastReceiver {
         if ((BluetoothDevice.ACTION_ACL_DISCONNECTED.equalsIgnoreCase(action) ||
                 BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equalsIgnoreCase(action)) &&
                 Util.isSafeBtDevice(context, device.getName())) {
-            EventBus.getDefault().post(new LockEvent(UnlockType.BLUETOOTH, device.getName()));
+            EventBus.getDefault().post(new LockEvent(UnlockType.BLUETOOTH, device.getName(), false));
         }
     }
 }

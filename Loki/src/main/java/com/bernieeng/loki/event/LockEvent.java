@@ -9,9 +9,16 @@ public class LockEvent {
 
     private final UnlockType type; //lock type
     private final String name;
+    private final boolean isForceLock;
 
-    public LockEvent(UnlockType type, String name) {
-        this.type = type; this.name = name;
+    public LockEvent(UnlockType type, String name, boolean isForceLock) {
+        this.type = type;
+        this.name = name;
+        this.isForceLock = isForceLock;
+    }
+
+    public boolean isForceLock() {
+        return isForceLock;
     }
 
     public UnlockType getType() {
@@ -24,8 +31,10 @@ public class LockEvent {
 
     @Override
     public String toString() {
-        return
+        return "LockEvent{" +
                 "type=" + type +
-                        ", name='" + name;
+                ", name='" + name + '\'' +
+                ", isForceLock=" + isForceLock +
+                '}';
     }
 }

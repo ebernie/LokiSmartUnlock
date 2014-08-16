@@ -103,7 +103,7 @@ public class ActivityRecognitionService extends IntentService {
                 } else {
                     if (activityType != DetectedActivity.TILTING && activityType != previousActivity) {
                         mBoundService.setPreviousActivity(activityType);
-                        EventBus.getDefault().post(new LockEvent(UnlockType.ACTIVITY, "Driving"));
+                        EventBus.getDefault().post(new LockEvent(UnlockType.ACTIVITY, "Driving", false));
                     }
                 }
             }

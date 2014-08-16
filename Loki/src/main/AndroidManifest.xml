@@ -38,6 +38,8 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name="com.bernieeng.loki.receiver.ForceLockReceiver" />
         <receiver
             android:name="com.bernieeng.loki.receiver.WifiStateReceiver"
             android:enabled="true"

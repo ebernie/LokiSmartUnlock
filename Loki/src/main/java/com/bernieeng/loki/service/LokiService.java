@@ -23,11 +23,11 @@ import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.BluetoothStateReceiver;
+import com.bernieeng.loki.receiver.ForceLockReceiver;
 import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.google.android.gms.location.DetectedActivity;
 import com.kofikodr.loki.R;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,21 +40,23 @@ import de.greenrobot.event.EventBus;
  */
 public class LokiService extends Service {
 
+    public static final String LOKI_ACTION_FORCELOCK = "loki.action.forcelock";
+    public static final int LOKI_ACTION_FORCELOCK_REQ_CODE = 1981;
     private BluetoothStateReceiver btReceiver;
+    private ForceLockReceiver lockReceiver;
     private NotificationManager mNM;
     private LocalBinder mBinder = new LocalBinder();
     private int NOTIFICATION = R.string.app_name;
     private int previousActivity = DetectedActivity.STILL;
     private ActivityRecognitionScan activityRecognitionScan;
     private Set<String> unlocks = new HashSet<String>();
-    private static boolean isRunning = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        isRunning = true;
         EventBus.getDefault().register(this);
         btReceiver = new BluetoothStateReceiver();
+        lockReceiver = new ForceLockReceiver();
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         showNotification();
 
@@ -102,18 +104,36 @@ public class LokiService extends Service {
                 new Intent(getApplicationContext(), HomeActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        String deviceStatus = unlocks.isEmpty() ? getString(R.string.device_locekd) : getString(R.string.device_unlocked);
-
-        Notification noti = new Notification.Builder(getApplicationContext())
-                .setContentTitle(getString(R.string.loki_enabled))
-                .setContentText(deviceStatus)
-                .setSmallIcon(R.drawable.ic_stat_loki)
-                .setOngoing(true)
-                .setPriority(Notification.PRIORITY_MIN)
-                .setAutoCancel(false)
-                .setContentIntent(pendingIntent)
-                .setTicker(getString(R.string.unlock_event_occured))
-                .build();
+        Notification noti;
+        String deviceStatus;
+        if (unlocks.isEmpty()) {
+            deviceStatus = getString(R.string.device_locekd);
+            noti = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(getString(R.string.loki_enabled))
+                    .setContentText(deviceStatus)
+                    .setSmallIcon(R.drawable.ic_stat_loki)
+                    .setOngoing(true)
+                    .setPriority(Notification.PRIORITY_MIN)
+                    .setAutoCancel(false)
+                    .setContentIntent(pendingIntent)
+                    .setTicker(getString(R.string.unlock_event_occured))
+                    .build();
+        } else {
+            deviceStatus = getString(R.string.device_unlocked);
+            Intent lockIntent = new Intent(this, ForceLockReceiver.class);
+            PendingIntent pi = PendingIntent.getBroadcast(this, LOKI_ACTION_FORCELOCK_REQ_CODE, lockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            noti = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(getString(R.string.loki_enabled))
+                    .setContentText(deviceStatus)
+                    .setSmallIcon(R.drawable.ic_stat_loki)
+                    .setOngoing(true)
+                    .setPriority(Notification.PRIORITY_MIN)
+                    .setAutoCancel(false)
+                    .addAction(R.drawable.ic_action_lock_closed, getString(R.string.lock_device), pi)
+                    .setContentIntent(pendingIntent)
+                    .setTicker(getString(R.string.unlock_event_occured))
+                    .build();
+        }
 
         // Send the notification.
         mNM.notify(NOTIFICATION, noti);
@@ -128,6 +148,10 @@ public class LokiService extends Service {
         registerReceiver(btReceiver, connected);
         activityRecognitionScan = new ActivityRecognitionScan(getApplicationContext());
         activityRecognitionScan.startActivityRecognitionScan();
+
+        IntentFilter lockFilter = new IntentFilter();
+        lockFilter.addAction(LOKI_ACTION_FORCELOCK);
+        registerReceiver(lockReceiver, lockFilter);
 
         return START_STICKY;
     }
@@ -144,7 +168,13 @@ public class LokiService extends Service {
     }
 
     public void onEvent(LockEvent event) {
-        unlocks.remove(event.toString());
+
+        if (event.isForceLock()) {
+            unlocks.clear();
+        } else {
+            unlocks.remove(event.toString());
+        }
+
         if (unlocks.isEmpty()) {
             Util.setPassword(this, Util.getPinOrPassword(this), event.getType());
             showNotification();
@@ -156,6 +186,7 @@ public class LokiService extends Service {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         unregisterReceiver(btReceiver);
+        unregisterReceiver(lockReceiver);
         if (activityRecognitionScan != null) {
             activityRecognitionScan.stopActivityRecognitionScan();
         }

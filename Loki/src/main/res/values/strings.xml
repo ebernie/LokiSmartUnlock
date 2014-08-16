@@ -89,5 +89,6 @@
     <string name="save">Save</string>
     <string name="welcome_text">Loki needs admin rights to do fancy stuff such as setting your PIN or password and unlocking your phone. </string>
     <string name="welcome_text_2">To setup Bluetooth or WiFi unlocks, enable them now. You can disable them after setup is complete.</string>
+    <string name="lock_device">Lock device</string>
 
 </resources>
