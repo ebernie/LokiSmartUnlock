@@ -31,10 +31,9 @@ public class LockEvent {
 
     @Override
     public String toString() {
-        return "LockEvent{" +
+        //MUST MATCH toString() in UnlockEvent!!!
+        return
                 "type=" + type +
-                ", name='" + name + '\'' +
-                ", isForceLock=" + isForceLock +
-                '}';
+                        ", name='" + name;
     }
 }

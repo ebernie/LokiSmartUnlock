@@ -83,12 +83,14 @@
     <string name="wifi_enabled">WiFi enabled</string>
     <string name="loki_enabled">Loki smart unlock enabled</string>
     <string name="run_setup_wizard">Run Setup Wizard</string>
-    <string name="device_locekd">Device is currently locked</string>
+    <string name="device_locekd">Device secured via PIN</string>
     <string name="device_unlocked">Device is currently unlocked</string>
     <string name="unlock_event_occured">Device lock status updated</string>
     <string name="save">Save</string>
     <string name="welcome_text">Loki needs admin rights to do fancy stuff such as setting your PIN or password and unlocking your phone. </string>
     <string name="welcome_text_2">To setup Bluetooth or WiFi unlocks, enable them now. You can disable them after setup is complete.</string>
     <string name="lock_device">Lock device</string>
+    <string name="driving">Driving</string>
+    <string name="unlock_factors">Unlock factors: </string>
 
 </resources>

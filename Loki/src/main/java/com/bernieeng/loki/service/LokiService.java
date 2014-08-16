@@ -16,11 +16,13 @@ import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import com.bernieeng.loki.ActivityRecognitionScan;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
+import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.BluetoothStateReceiver;
 import com.bernieeng.loki.receiver.ForceLockReceiver;
@@ -28,7 +30,9 @@ import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.google.android.gms.location.DetectedActivity;
 import com.kofikodr.loki.R;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import de.greenrobot.event.EventBus;
@@ -49,7 +53,7 @@ public class LokiService extends Service {
     private int NOTIFICATION = R.string.app_name;
     private int previousActivity = DetectedActivity.STILL;
     private ActivityRecognitionScan activityRecognitionScan;
-    private Set<String> unlocks = new HashSet<String>();
+    private static Set<String> unlocks = Collections.synchronizedSet(new HashSet<String>());
 
     @Override
     public void onCreate() {
@@ -68,7 +72,7 @@ public class LokiService extends Service {
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
             String ssid = Util.getSSID(connectionInfo);
             if (Util.isSafeNetwork(this, ssid)) {
-                onEvent(new UnlockEvent(UnlockType.WIFI, ssid));
+                onEvent(new UnlockEvent(UnlockType.WIFI, ""));
             }
         }
 
@@ -109,8 +113,8 @@ public class LokiService extends Service {
         if (unlocks.isEmpty()) {
             deviceStatus = getString(R.string.device_locekd);
             noti = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(getString(R.string.loki_enabled))
-                    .setContentText(deviceStatus)
+                    .setContentTitle(deviceStatus)
+                    .setContentText(getString(R.string.unlock_factors) + " " +  unlocks.size())
                     .setSmallIcon(R.drawable.ic_stat_loki)
                     .setOngoing(true)
                     .setPriority(Notification.PRIORITY_MIN)
@@ -122,9 +126,16 @@ public class LokiService extends Service {
             deviceStatus = getString(R.string.device_unlocked);
             Intent lockIntent = new Intent(this, ForceLockReceiver.class);
             PendingIntent pi = PendingIntent.getBroadcast(this, LOKI_ACTION_FORCELOCK_REQ_CODE, lockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//            StringBuilder sb = new StringBuilder();
+//            Iterator<String> iterator = unlocks.iterator();
+//            while (iterator.hasNext()) {
+//                sb.append(iterator.next());
+//                sb.append("\n");
+//            }
+//            String subtext = sb.toString().trim();
             noti = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(getString(R.string.loki_enabled))
-                    .setContentText(deviceStatus)
+                    .setContentTitle(deviceStatus)
+                    .setContentText(getString(R.string.unlock_factors) + " " + unlocks.size())
                     .setSmallIcon(R.drawable.ic_stat_loki)
                     .setOngoing(true)
                     .setPriority(Notification.PRIORITY_MIN)
@@ -163,6 +174,7 @@ public class LokiService extends Service {
 
     public void onEvent(UnlockEvent event) {
         unlocks.add(event.toString());
+//        Toast.makeText(this, "Adding unlock factor: " + event.toString(), Toast.LENGTH_LONG).show();
         Util.unSetPassword(this, false, event.getType());
         showNotification();
     }
@@ -173,12 +185,13 @@ public class LokiService extends Service {
             unlocks.clear();
         } else {
             unlocks.remove(event.toString());
+//            Toast.makeText(this, "Removing unlock factor: " + event.toString(), Toast.LENGTH_LONG).show();
         }
 
         if (unlocks.isEmpty()) {
             Util.setPassword(this, Util.getPinOrPassword(this), event.getType());
-            showNotification();
         }
+        showNotification();
     }
 
     @Override
@@ -197,8 +210,9 @@ public class LokiService extends Service {
     }
 
     public class LocalBinder extends Binder {
-        LokiService getService() {
+        public LokiService getService() {
             return LokiService.this;
         }
     }
+
 }
