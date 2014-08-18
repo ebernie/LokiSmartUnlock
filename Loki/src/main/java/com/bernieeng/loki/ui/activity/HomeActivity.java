@@ -440,6 +440,14 @@ public class HomeActivity extends FragmentActivity {
             }
 
             @Override
+            public boolean isEnabled(int position) {
+                if (HEADER_POSITIONS.contains(position)) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
             public int getItemViewType(int position) {
                 if (HEADER_POSITIONS.contains(position)) {
                     return VIEW_TYPE_HEADER;
