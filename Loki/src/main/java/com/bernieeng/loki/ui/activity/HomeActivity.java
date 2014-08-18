@@ -175,7 +175,7 @@ public class HomeActivity extends FragmentActivity {
                                 btAdapter = BluetoothAdapter.getDefaultAdapter();
                                 if (btAdapter != null) {
                                     if (btAdapter.isEnabled()) {
-                                startActivity(new Intent(getActivity(), BluetoothSelectActivity.class));
+                                        startActivity(new Intent(getActivity(), BluetoothSelectActivity.class));
                                     } else {
                                         btReceiver = new BluetoothActivatedReceiver();
                                         IntentFilter btif = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
@@ -195,6 +195,7 @@ public class HomeActivity extends FragmentActivity {
         }
 
         private BluetoothActivatedReceiver btReceiver;
+
         class BluetoothActivatedReceiver extends BroadcastReceiver {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -218,8 +219,8 @@ public class HomeActivity extends FragmentActivity {
 
         private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
             if (prefKey.contains(getString(R.string.title_bt_unlock))) {
-                target.add(new Unlock(UnlockType.BLUETOOTH, unlockName, prefKey));
                 Util.addSafeBluetooth(getActivity(), unlockName);
+                target.add(new Unlock(UnlockType.BLUETOOTH, unlockName, prefKey));
             } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
                 target.add(new Unlock(UnlockType.WIFI, unlockName, prefKey));
                 Util.addSafeWifi(getActivity(), unlockName);
@@ -276,7 +277,6 @@ public class HomeActivity extends FragmentActivity {
                 public void onClick(View v) {
                     int position = getListView().getPositionForView(v);
                     removeFromPreference(position);
-//                    ((UnlockListAdapter)getListAdapter()).remove(getListAdapter().getItem(position));
                     //this will actually remove the item from the adapter too
                     animateRemoval(getListView(), v);
                 }
@@ -298,11 +298,16 @@ public class HomeActivity extends FragmentActivity {
                     bt -> bt1, bt2, bt3
                  */
                 final HashMultimap<UnlockType, Unlock> unlockTypeToUnlockMap = HashMultimap.create();
+                Unlock dummy1 = new Unlock(UnlockType.ACTIVITY, "dummy", "dummy");
+                Unlock dummy2 = new Unlock(UnlockType.WIFI, "dummy", "dummy");
+                Unlock dummy3 = new Unlock(UnlockType.BLUETOOTH, "dummy", "dummy");
+                unlockTypeToUnlockMap.put(UnlockType.ACTIVITY, dummy1);
+                unlockTypeToUnlockMap.put(UnlockType.WIFI, dummy2);
+                unlockTypeToUnlockMap.put(UnlockType.BLUETOOTH, dummy3);
                 for (int i = 0; i < unlocks.size(); i++) {
                     Unlock unlock = unlocks.get(i);
                     final UnlockType key = unlock.getType();
                     unlockTypeToUnlockMap.get(key).add(unlock);
-
                 }
 
                 // wifi, bt //
@@ -317,6 +322,9 @@ public class HomeActivity extends FragmentActivity {
                     final Set<Unlock> set = unlockTypeToUnlockMap.get(key);
                     ArrayList<Unlock> tmp = new ArrayList<Unlock>(set.size());
                     tmp.addAll(set);
+                    tmp.remove(dummy1);
+                    tmp.remove(dummy2);
+                    tmp.remove(dummy3);
                     Collections.sort(tmp, new Comparator<Unlock>() {
                         @Override
                         public int compare(Unlock lhs, Unlock rhs) {
@@ -329,10 +337,10 @@ public class HomeActivity extends FragmentActivity {
                     this.items.addAll(tmp);
                     HEADER_POSITIONS.add(items.indexOf(key));
                     // for BT and WiFi, we allow a 'footer' to add more
-                    if (UnlockType.BLUETOOTH.equals(key) || UnlockType.WIFI.equals(key)) {
-                        this.items.add(key.getValue());
-                        FOOTER_POSITIONS.add(items.indexOf(key.getValue()));
-                    }
+//                    if (UnlockType.BLUETOOTH.equals(key) || UnlockType.WIFI.equals(key)) {
+                    this.items.add(key.getValue());
+                    FOOTER_POSITIONS.add(items.indexOf(key.getValue()));
+//                    }
                 }
 
                 for (int i = 0; i < this.items.size(); ++i) {
@@ -427,7 +435,6 @@ public class HomeActivity extends FragmentActivity {
                         } else {
                             unlockViewHolder.unlockSymbol.setImageResource(R.drawable.ic_action_car);
                         }
-
                         return convertView;
                     case VIEW_TYPE_ADD:
                         if (convertView == null) {
