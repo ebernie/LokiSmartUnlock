@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.AdminReceiver;
 import com.google.android.gms.location.DetectedActivity;
+import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,7 +37,8 @@ public class Util {
 
     private static final String PREF_KEY_SAFE_WIFI = "loki.wifi";
     private static final String PREF_KEY_SAFE_BT = "loki.bt";
-    private static final String PREF_KEY_DRIVE_UNLOCK = "loki.drive";
+    private static final String PREF_KEY_SAFE_ACT = "loki.act";
+    private static final String PREF_KEY_ALL_POSSIBLE_SAFE_ACT = "loki.allact";
     public static final String PREF_KEY_PASS_OR_PIN = "loki.pass";
 
     public static String getSSID(WifiInfo connectionInfo) {
@@ -126,6 +128,30 @@ public class Util {
         return configuredNetworkNames;
     }
 
+    public static Set<String> getUnlockActivities(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getStringSet(PREF_KEY_SAFE_ACT, new HashSet<String>(0));
+    }
+
+    public static ArrayList<String> getAllPossibleUnlockActivities(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> set = prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, null);
+        if (set == null) {
+            // to cater for upgrades
+            set.add(context.getString(R.string.enable_in_vehicle_unlock));
+        }
+        return new ArrayList<String>(prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, new HashSet<String>(0)));
+    }
+
+    public static void saveAllPossibleSafeActivitiesList(Context context, Set<String> allSafeActivities) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, allSafeActivities).commit();
+    }
+
+    public static boolean isDriveUnlockEnabled(Context context) {
+        return getUnlockActivities(context).contains(context.getString(R.string.vehicle_unlock));
+    }
+
     public static ArrayList<String> getBluetoothPairedDevices() {
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //BT is not supported on this device
@@ -160,7 +186,26 @@ public class Util {
         }
         safeWifiNetworkNames.add(name);
         prefs.edit().putStringSet(PREF_KEY_SAFE_WIFI, safeWifiNetworkNames).commit();
+    }
 
+    public static void addSafeActivity(Context context, String name) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeActNames = prefs.getStringSet(PREF_KEY_SAFE_ACT, null);
+        if (safeActNames == null) {
+            safeActNames = new HashSet<String>();
+        }
+        safeActNames.add(name);
+        prefs.edit().putStringSet(PREF_KEY_SAFE_ACT, safeActNames).commit();
+
+    }
+
+    public static void removeSafeActivity(Context context, String name) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> safeActNames = prefs.getStringSet(PREF_KEY_SAFE_ACT, null);
+        if (safeActNames != null) {
+            safeActNames.remove(name);
+        }
+        prefs.edit().putStringSet(PREF_KEY_SAFE_ACT, safeActNames).commit();
     }
 
     public static void addSafeBluetooth(Context context, String name) {
@@ -209,19 +254,13 @@ public class Util {
         return false;
     }
 
-    public static void enableDriveUnlock(Context context) {
+    public static boolean isSafeAct(Context context, String actName) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean(PREF_KEY_DRIVE_UNLOCK, true).commit();
-    }
-
-    public static void disableDriveUnlock(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean(PREF_KEY_DRIVE_UNLOCK, false).commit();
-    }
-
-    public static boolean isDriveUnlockEnabled(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(PREF_KEY_DRIVE_UNLOCK, false);
+        Set<String> safeBtDeviceNames = prefs.getStringSet(PREF_KEY_SAFE_ACT, null);
+        if (safeBtDeviceNames != null) {
+            return safeBtDeviceNames.contains(actName);
+        }
+        return false;
     }
 
     public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {

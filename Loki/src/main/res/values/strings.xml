@@ -7,7 +7,6 @@
     <string name="password_enabled">Password enabled:</string>
     <string name="password_disabled">Password disabled</string>
     <string name="settings_summary">Configure Loki</string>
-    <string name="settings_title">Settings</string>
     <string name="set_password_description">Enter your desired PIN. This PIN will be required to unlock your device if it is not connected to a safe network. Note that this WILL override PIN
         set elsewhere.</string>
     <string name="set_password_title">Phone PIN</string>
@@ -54,14 +53,13 @@
     <string name="vehicle_unlock">Exit vehicle delay (in minutes)</string>
     <string name="gplay_error_msg">This feature relies on Google Play Services, which is unavailable or outdated on your device</string>
     <string name="title_activity_setup_pin">SetupPinActivity</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_setup_wizard">SetupWizardActivity</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
     <string name="prev">Previous</string>
     <string name="review">Review</string>
     <string name="finish">Finish</string>
-    <string name="submit_confirm_message">You\'ve setup Loki! You can always change your unlocks via Settings.</string>
+    <string name="submit_confirm_message">You\'ve setup Loki! You can always runt this wizard again.</string>
     <string name="submit_confirm_button">Okay</string>
     <string name="welcome_to_loki">Welcome to Loki! Please setup a passcode to secure your phone.</string>
     <string name="setup">Setup</string>
@@ -92,5 +90,7 @@
     <string name="lock_device">Lock device</string>
     <string name="driving">Driving</string>
     <string name="unlock_factors">Unlock factors: </string>
+    <string name="enable_in_vehicle_unlock">In-vehicle unlock</string>
+    <string name="title_activity_unlock">Activity Based Unlock</string>
 
 </resources>

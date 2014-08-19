@@ -184,7 +184,9 @@ public class HomeActivity extends FragmentActivity {
                                         startActivityForResult(enableBtIntent, ACTION_REQUEST_ENABLE);
                                     }
                                 }
-
+                                break;
+                            case ACTIVITY:
+                                startActivity(new Intent(getActivity(), ActActivity.class));
                                 break;
                             default:
                                 //do nothing
@@ -224,9 +226,10 @@ public class HomeActivity extends FragmentActivity {
             } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
                 target.add(new Unlock(UnlockType.WIFI, unlockName, prefKey));
                 Util.addSafeWifi(getActivity(), unlockName);
-            } else if (prefKey.contains(getString(R.string.title_vehicle_unlock))) {
+            } else if (prefKey.contains(getString(R.string.title_activity_unlock))) {
                 target.add(new Unlock(UnlockType.ACTIVITY, unlockName, prefKey));
-                Util.enableDriveUnlock(getActivity());
+//                Util.enableDriveUnlock(getActivity());
+                Util.addSafeActivity(getActivity(), unlockName);
             }
         }
 
@@ -248,8 +251,9 @@ public class HomeActivity extends FragmentActivity {
                         Util.addSafeBluetooth(getActivity(), name);
                     } else if (key.contains(getString(R.string.title_wifi_unlock))) {
                         Util.addSafeWifi(getActivity(), name);
-                    } else if (key.contains(getString(R.string.title_vehicle_unlock))) {
-                        Util.enableDriveUnlock(getActivity());
+                    } else if (key.contains(getString(R.string.title_activity_unlock))) {
+//                        Util.enableDriveUnlock(getActivity());
+                        Util.addSafeActivity(getActivity(), name);
                     }
 
                 } else {
@@ -298,9 +302,10 @@ public class HomeActivity extends FragmentActivity {
                     bt -> bt1, bt2, bt3
                  */
                 final HashMultimap<UnlockType, Unlock> unlockTypeToUnlockMap = HashMultimap.create();
-                Unlock dummy1 = new Unlock(UnlockType.ACTIVITY, "dummy", "dummy");
-                Unlock dummy2 = new Unlock(UnlockType.WIFI, "dummy", "dummy");
-                Unlock dummy3 = new Unlock(UnlockType.BLUETOOTH, "dummy", "dummy");
+                String dummy = "dummy";
+                Unlock dummy1 = new Unlock(UnlockType.ACTIVITY, dummy, dummy);
+                Unlock dummy2 = new Unlock(UnlockType.WIFI, dummy, dummy);
+                Unlock dummy3 = new Unlock(UnlockType.BLUETOOTH, dummy, dummy);
                 unlockTypeToUnlockMap.put(UnlockType.ACTIVITY, dummy1);
                 unlockTypeToUnlockMap.put(UnlockType.WIFI, dummy2);
                 unlockTypeToUnlockMap.put(UnlockType.BLUETOOTH, dummy3);
@@ -336,11 +341,8 @@ public class HomeActivity extends FragmentActivity {
                     });
                     this.items.addAll(tmp);
                     HEADER_POSITIONS.add(items.indexOf(key));
-                    // for BT and WiFi, we allow a 'footer' to add more
-//                    if (UnlockType.BLUETOOTH.equals(key) || UnlockType.WIFI.equals(key)) {
                     this.items.add(key.getValue());
                     FOOTER_POSITIONS.add(items.indexOf(key.getValue()));
-//                    }
                 }
 
                 for (int i = 0; i < this.items.size(); ++i) {
@@ -514,8 +516,9 @@ public class HomeActivity extends FragmentActivity {
                         Util.removeSafeBluetooth(getActivity(), deletedUnlock.getName());
                     } else if (deletedUnlock.getKey().contains(getString(R.string.title_wifi_unlock))) {
                         Util.removeSafeWifi(getActivity(), deletedUnlock.getName());
-                    } else if (deletedUnlock.getKey().contains(getString(R.string.title_vehicle_unlock))) {
-                        Util.disableDriveUnlock(getActivity());
+                    } else if (deletedUnlock.getKey().contains(getString(R.string.title_activity_unlock))) {
+//                        Util.disableDriveUnlock(getActivity());
+                        Util.removeSafeActivity(getActivity(), deletedUnlock.getName());
                     }
 
                 }

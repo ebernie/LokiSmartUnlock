@@ -21,7 +21,7 @@ public class ActivityRecognitionScan implements GooglePlayServicesClient.Connect
     private static final String TAG = "ActivityRecognition";
     private static ActivityRecognitionClient mActivityRecognitionClient;
     private static PendingIntent callbackIntent;
-    private static final String DEFAULT_DELAY = "1";
+    private static final int DEFAULT_DELAY = 1;
 
     public ActivityRecognitionScan(Context context) {
         this.context = context;
@@ -59,9 +59,7 @@ public class ActivityRecognitionScan implements GooglePlayServicesClient.Connect
         Intent intent = new Intent(context, ActivityRecognitionService.class);
         callbackIntent = PendingIntent.getService(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final long delay = Long.valueOf(prefs.getString("5", DEFAULT_DELAY));
-        mActivityRecognitionClient.requestActivityUpdates(60000 * delay, callbackIntent); // 0 sets it to update as fast as possible, just use this for testing!
+        mActivityRecognitionClient.requestActivityUpdates(60000 * DEFAULT_DELAY, callbackIntent); // 0 sets it to update as fast as possible, just use this for testing!
     }
 
     @Override

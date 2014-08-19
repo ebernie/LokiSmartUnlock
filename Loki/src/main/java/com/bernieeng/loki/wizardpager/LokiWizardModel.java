@@ -23,10 +23,11 @@ import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.MultipleFixedChoicePage;
 import com.bernieeng.loki.wizardpager.model.PageList;
 import com.bernieeng.loki.wizardpager.model.PinSetupPage;
-import com.bernieeng.loki.wizardpager.model.SingleFixedChoicePage;
 import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LokiWizardModel extends AbstractWizardModel {
 
@@ -58,7 +59,10 @@ public class LokiWizardModel extends AbstractWizardModel {
             pageList.add(btPage);
         }
 
-        pageList.add(new MultipleFixedChoicePage(this, context.getString(R.string.title_vehicle_unlock)).setChoices("Enable in-vehicle unlock").setRequired(false));
+        final Set<String> allPossibleSafeActivities = new HashSet<String>(1);
+        allPossibleSafeActivities.add(context.getString(R.string.enable_in_vehicle_unlock));
+        Util.saveAllPossibleSafeActivitiesList(mContext, allPossibleSafeActivities);
+        pageList.add(new MultipleFixedChoicePage(this, context.getString(R.string.title_activity_unlock)).setChoices(new ArrayList<String>(allPossibleSafeActivities)).setRequired(false));
         return pageList;
     }
 

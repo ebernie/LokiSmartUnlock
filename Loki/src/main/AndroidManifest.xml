@@ -99,6 +99,8 @@
             android:screenOrientation="portrait"
             android:label="@string/title_activity_pre_wizard_setup" />
 
+        <activity android:name="com.bernieeng.loki.ui.activity.ActActivity" android:screenOrientation="portrait" />
+
         <activity
             android:name="com.bernieeng.loki.ui.activity.BluetoothSelectActivity"
             android:noHistory="true"
