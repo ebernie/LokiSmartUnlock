@@ -16,23 +16,21 @@ import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import com.bernieeng.loki.ActivityRecognitionScan;
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.event.LockEvent;
 import com.bernieeng.loki.event.UnlockEvent;
-import com.bernieeng.loki.model.Unlock;
 import com.bernieeng.loki.model.UnlockType;
 import com.bernieeng.loki.receiver.BluetoothStateReceiver;
 import com.bernieeng.loki.receiver.ForceLockReceiver;
 import com.bernieeng.loki.ui.activity.HomeActivity;
+import com.bernieeng.loki.ui.activity.PreWizardSetupActivity;
 import com.google.android.gms.location.DetectedActivity;
 import com.kofikodr.loki.R;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import de.greenrobot.event.EventBus;
@@ -102,19 +100,28 @@ public class LokiService extends Service {
      */
     private void showNotification() {
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                getApplicationContext(),
-                0,
-                new Intent(getApplicationContext(), HomeActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = null;
+        if (Util.isWizardRunNeeded(this)) {
+            pendingIntent = PendingIntent.getActivity(
+                    getApplicationContext(),
+                    0,
+                    new Intent(getApplicationContext(), PreWizardSetupActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            pendingIntent = PendingIntent.getActivity(
+                    getApplicationContext(),
+                    0,
+                    new Intent(getApplicationContext(), HomeActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         Notification noti;
         String deviceStatus;
         if (unlocks.isEmpty()) {
-            deviceStatus = getString(R.string.device_locekd);
+            deviceStatus = Util.isWizardRunNeeded(this) ? getString(R.string.rerun_setup_wizard) : getString(R.string.device_locekd);
             noti = new Notification.Builder(getApplicationContext())
                     .setContentTitle(deviceStatus)
-                    .setContentText(getString(R.string.unlock_factors) + " " +  unlocks.size())
+                    .setContentText(getString(R.string.unlock_factors) + " " + unlocks.size())
                     .setSmallIcon(R.drawable.ic_stat_loki)
                     .setOngoing(true)
                     .setPriority(Notification.PRIORITY_MIN)
@@ -123,7 +130,7 @@ public class LokiService extends Service {
                     .setTicker(getString(R.string.unlock_event_occured))
                     .build();
         } else {
-            deviceStatus = getString(R.string.device_unlocked);
+            deviceStatus = Util.isWizardRunNeeded(this) ? getString(R.string.rerun_setup_wizard) : getString(R.string.device_unlocked);
             Intent lockIntent = new Intent(this, ForceLockReceiver.class);
             PendingIntent pi = PendingIntent.getBroadcast(this, LOKI_ACTION_FORCELOCK_REQ_CODE, lockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 //            StringBuilder sb = new StringBuilder();

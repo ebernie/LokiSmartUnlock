@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bernieeng.loki.Util;
 import com.bernieeng.loki.ui.activity.HomeActivity;
 import com.bernieeng.loki.wizardpager.model.AbstractWizardModel;
 import com.bernieeng.loki.wizardpager.model.ModelCallbacks;
@@ -130,9 +131,11 @@ public class SetupWizardActivity extends FragmentActivity implements
                                                 }
                                             }
                                             edit.putStringSet(LokiWizardModel.PREF_KEYS, keys).commit();
+                                            Util.wizardRunCheck(SetupWizardActivity.this);
                                             SetupWizardActivity.this.finish();
                                             //start list activity
                                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                            
                                         }
                                     })
                                     .setNegativeButton(android.R.string.cancel, null)

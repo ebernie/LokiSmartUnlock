@@ -32,6 +32,7 @@ import java.util.Set;
  */
 public class Util {
     public static final String DEF_VALUE = "";
+    private static final String PREF_KEY_WIZARD_RUN_NEEDED = "loki.wizardrun";
     private static DevicePolicyManager mgr;
     private static KeyguardManager.KeyguardLock keyguardLock;
 
@@ -144,6 +145,20 @@ public class Util {
             return new ArrayList<String>(set);
         }
         return new ArrayList<String>(prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, new HashSet<String>(0)));
+    }
+
+    public static void wizardRunCheck(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> set = prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, null);
+        if (set == null) {
+            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, true).commit();
+        } else {
+            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false).commit();
+        }
+    }
+
+    public static boolean isWizardRunNeeded(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false);
     }
 
     public static void saveAllPossibleSafeActivitiesList(Context context, Set<String> allSafeActivities) {
