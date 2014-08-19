@@ -138,7 +138,10 @@ public class Util {
         Set<String> set = prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, null);
         if (set == null) {
             // to cater for upgrades
+            set = new HashSet<String>(1);
             set.add(context.getString(R.string.enable_in_vehicle_unlock));
+            prefs.edit().putStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, set).commit();
+            return new ArrayList<String>(set);
         }
         return new ArrayList<String>(prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, new HashSet<String>(0)));
     }
