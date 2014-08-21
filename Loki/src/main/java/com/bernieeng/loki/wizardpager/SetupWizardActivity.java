@@ -131,7 +131,7 @@ public class SetupWizardActivity extends FragmentActivity implements
                                                 }
                                             }
                                             edit.putStringSet(LokiWizardModel.PREF_KEYS, keys).commit();
-                                            Util.wizardRunCheck(SetupWizardActivity.this);
+//                                            Util.wizardRunCheck(SetupWizardActivity.this);
                                             SetupWizardActivity.this.finish();
                                             //start list activity
                                             startActivity(new Intent(getApplicationContext(), HomeActivity.class));

@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -115,10 +116,7 @@ public class ActActivity extends FragmentActivity {
         }
 
         private void saveEntries() {
-            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            final Set<String> set = new HashSet<String>();
-            set.addAll(selectedItems);
-            preferences.edit().putStringSet(getString(R.string.title_activity_unlock), set).commit();
+            Util.saveSafeActivities(getActivity(), new HashSet<String>(selectedItems));
             getActivity().finish();
         }
 
@@ -126,6 +124,10 @@ public class ActActivity extends FragmentActivity {
         public void onResume() {
             super.onResume();
             final ArrayList<String> actNames = Util.getAllPossibleUnlockActivities(getActivity());
+            for (int i = 0; i < actNames.size(); i++) {
+                Log.d("Loki Debug: all possible - ", actNames.get(i));
+            }
+
             title.setText(R.string.title_activity_unlock);
             if (actNames != null) {
                 populateListView(actNames);
@@ -141,6 +143,10 @@ public class ActActivity extends FragmentActivity {
             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
             final Set<String> set = Util.getUnlockActivities(getActivity());
+            ArrayList<String> tmp = new ArrayList<String>(set);
+            for (int i = 0; i < tmp.size(); i++) {
+                Log.d("Loki Debug: selected - ", tmp.get(i));
+            }
 
             if (set != null) {
                 // Pre-select currently selected items.

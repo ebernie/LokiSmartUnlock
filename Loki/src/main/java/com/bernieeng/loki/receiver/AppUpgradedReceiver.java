@@ -13,7 +13,7 @@ import com.bernieeng.loki.service.LokiService;
 public class AppUpgradedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Util.wizardRunCheck(context);
+//        Util.wizardRunCheck(context);
         context.startService(new Intent(context, LokiService.class));
     }
 }

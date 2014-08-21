@@ -147,19 +147,19 @@ public class Util {
         return new ArrayList<String>(prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, new HashSet<String>(0)));
     }
 
-    public static void wizardRunCheck(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> set = prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, null);
-        if (set == null) {
-            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, true).commit();
-        } else {
-            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false).commit();
-        }
-    }
+//    public static void wizardRunCheck(Context context) {
+//        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+//        Set<String> set = prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, null);
+//        if (set == null) {
+//            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, true).commit();
+//        } else {
+//            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false).commit();
+//        }
+//    }
 
-    public static boolean isWizardRunNeeded(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false);
-    }
+//    public static boolean isWizardRunNeeded(Context context) {
+//        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false);
+//    }
 
     public static void saveAllPossibleSafeActivitiesList(Context context, Set<String> allSafeActivities) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -224,6 +224,14 @@ public class Util {
             safeActNames.remove(name);
         }
         prefs.edit().putStringSet(PREF_KEY_SAFE_ACT, safeActNames).commit();
+    }
+
+    public static void saveSafeActivities(Context context, Set<String> activityNames) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> set = prefs.getStringSet(PREF_KEY_SAFE_ACT, null);
+        if (set != null) {
+            prefs.edit().putStringSet(PREF_KEY_SAFE_ACT, set).commit();
+        }
     }
 
     public static void addSafeBluetooth(Context context, String name) {

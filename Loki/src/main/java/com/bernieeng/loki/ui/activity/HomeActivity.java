@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -226,7 +227,8 @@ public class HomeActivity extends FragmentActivity {
             } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
                 target.add(new Unlock(UnlockType.WIFI, unlockName, prefKey));
                 Util.addSafeWifi(getActivity(), unlockName);
-            } else if (prefKey.contains(getString(R.string.title_activity_unlock))) {
+            } else if (prefKey.contains(getString(R.string.title_activity_unlock)) || prefKey.contains(getString(R.string.title_vehicle_unlock))) {
+//                Toast.makeText(getActivity(), "Pref Key is " + prefKey, Toast.LENGTH_LONG).show();
                 target.add(new Unlock(UnlockType.ACTIVITY, unlockName, prefKey));
 //                Util.enableDriveUnlock(getActivity());
                 Util.addSafeActivity(getActivity(), unlockName);
@@ -251,7 +253,7 @@ public class HomeActivity extends FragmentActivity {
                         Util.addSafeBluetooth(getActivity(), name);
                     } else if (key.contains(getString(R.string.title_wifi_unlock))) {
                         Util.addSafeWifi(getActivity(), name);
-                    } else if (key.contains(getString(R.string.title_activity_unlock))) {
+                    } else if (key.contains(getString(R.string.title_activity_unlock))|| key.contains(getString(R.string.title_vehicle_unlock))) {
 //                        Util.enableDriveUnlock(getActivity());
                         Util.addSafeActivity(getActivity(), name);
                     }
@@ -516,9 +518,10 @@ public class HomeActivity extends FragmentActivity {
                         Util.removeSafeBluetooth(getActivity(), deletedUnlock.getName());
                     } else if (deletedUnlock.getKey().contains(getString(R.string.title_wifi_unlock))) {
                         Util.removeSafeWifi(getActivity(), deletedUnlock.getName());
-                    } else if (deletedUnlock.getKey().contains(getString(R.string.title_activity_unlock))) {
+                    } else if (deletedUnlock.getKey().contains(getString(R.string.title_activity_unlock)) || deletedUnlock.getKey().contains(getString(R.string.title_vehicle_unlock))) {
 //                        Util.disableDriveUnlock(getActivity());
                         Util.removeSafeActivity(getActivity(), deletedUnlock.getName());
+                        Log.d("Loki Debug: loading into home - ", deletedUnlock.toString());
                     }
 
                 }
@@ -526,7 +529,7 @@ public class HomeActivity extends FragmentActivity {
                 //oops it's a string
                 preferences.getString(deletedUnlock.getKey(), null);
                 edit.remove(deletedUnlock.getKey()).commit();
-                Toast.makeText(getActivity(), "Removing (handle this!) " + deletedUnlock.getKey(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Removing (handle this!) " + deletedUnlock.getKey(), Toast.LENGTH_LONG).show();
             }
         }
 
