@@ -28,7 +28,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bernieeng.loki.Util;
 import com.bernieeng.loki.model.Unlock;
@@ -143,9 +142,15 @@ public class HomeActivity extends FragmentActivity {
         public void onResume() {
             super.onResume();
             final Set<String> keys = preferences.getStringSet(LokiWizardModel.PREF_KEYS, null);
+            if (keys != null && !keys.contains(getString(R.string.title_activity_unlock))) {
+                keys.add(getString(R.string.title_activity_unlock));
+                keys.remove(getString(R.string.title_vehicle_unlock));
+                preferences.edit().putStringSet(LokiWizardModel.PREF_KEYS, keys).commit();
+            }
             List<Unlock> unlockList = new ArrayList<Unlock>();
             if (keys != null) {
                 for (String key : keys) {
+                    Log.d("Loki Debug", "Keys in wizard model: " + key);
                     try {
                         String unlockPref = preferences.getString(key, null);
                         if (!TextUtils.isEmpty(unlockPref)) {
@@ -221,14 +226,16 @@ public class HomeActivity extends FragmentActivity {
         }
 
         private void addUnlockToList(List<Unlock> target, String prefKey, String unlockName) {
+            Log.d("Loki Debug", "Home screen loading: " + unlockName);
             if (prefKey.contains(getString(R.string.title_bt_unlock))) {
                 Util.addSafeBluetooth(getActivity(), unlockName);
                 target.add(new Unlock(UnlockType.BLUETOOTH, unlockName, prefKey));
             } else if (prefKey.contains(getString(R.string.title_wifi_unlock))) {
                 target.add(new Unlock(UnlockType.WIFI, unlockName, prefKey));
                 Util.addSafeWifi(getActivity(), unlockName);
-            } else if (prefKey.contains(getString(R.string.title_activity_unlock)) || prefKey.contains(getString(R.string.title_vehicle_unlock))) {
+            } else if (prefKey.contains(getString(R.string.title_activity_unlock)) || prefKey.contains(getString(R.string.title_vehicle_unlock)) || prefKey.contains("Enable in-vehicle unlock")) {
 //                Toast.makeText(getActivity(), "Pref Key is " + prefKey, Toast.LENGTH_LONG).show();
+                Log.d("Loki Debug", "Home screen saving: " + unlockName);
                 target.add(new Unlock(UnlockType.ACTIVITY, unlockName, prefKey));
 //                Util.enableDriveUnlock(getActivity());
                 Util.addSafeActivity(getActivity(), unlockName);
@@ -241,26 +248,28 @@ public class HomeActivity extends FragmentActivity {
                 final int position = ((Bundle) token).getInt("index");
                 final SharedPreferences.Editor edit = preferences.edit();
                 //save deleted unlock
-                if (UnlockType.BLUETOOTH.equals(deletedUnlock.getType()) || UnlockType.WIFI.equals(deletedUnlock.getType())) {
-                    String key = deletedUnlock.getKey();
-                    Set<String> data = preferences.getStringSet(key, null);
-                    String name = deletedUnlock.getName();
-                    data.add(name);
-                    edit.remove(key).commit();
-                    edit.putStringSet(key, data).commit();
+//                if (UnlockType.BLUETOOTH.equals(deletedUnlock.getType()) || UnlockType.WIFI.equals(deletedUnlock.getType()) || UnlockType.) {
+                String key = deletedUnlock.getKey();
+                Set<String> data = preferences.getStringSet(key, null);
+                String name = deletedUnlock.getName();
+                data.add(name);
+                edit.remove(key).commit();
+                edit.putStringSet(key, data).commit();
 
-                    if (key.contains(getString(R.string.title_bt_unlock))) {
-                        Util.addSafeBluetooth(getActivity(), name);
-                    } else if (key.contains(getString(R.string.title_wifi_unlock))) {
-                        Util.addSafeWifi(getActivity(), name);
-                    } else if (key.contains(getString(R.string.title_activity_unlock))|| key.contains(getString(R.string.title_vehicle_unlock))) {
+                if (key.contains(getString(R.string.title_bt_unlock))) {
+                    Util.addSafeBluetooth(getActivity(), name);
+                } else if (key.contains(getString(R.string.title_wifi_unlock))) {
+                    Util.addSafeWifi(getActivity(), name);
+                } else if (key.contains(getString(R.string.title_activity_unlock)) || key.contains(getString(R.string.title_vehicle_unlock)) || key.contains("Enable in-vehicle unlock")) {
 //                        Util.enableDriveUnlock(getActivity());
-                        Util.addSafeActivity(getActivity(), name);
-                    }
-
-                } else {
-//                    preferences.edit().putString(deletedUnlock.getKey(), deletedUnlock.getName()).commit();
+                    Log.d("Loki Debug", "Home screen saving (undo): " + name);
+                    Util.addSafeActivity(getActivity(), name);
                 }
+
+//                } else if (UnlockType.ACTIVITY.equals(deletedUnlock.getType())) {
+
+//                    preferences.edit().putString(deletedUnlock.getKey(), deletedUnlock.getName()).commit();
+//                }
                 // put it back into the list
                 ((UnlockListAdapter) getListAdapter()).insert(deletedUnlock, position);
             }

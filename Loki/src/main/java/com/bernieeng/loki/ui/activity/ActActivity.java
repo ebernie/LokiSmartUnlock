@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bernieeng.loki.Util;
+import com.bernieeng.loki.wizardpager.LokiWizardModel;
 import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
@@ -116,7 +117,10 @@ public class ActActivity extends FragmentActivity {
         }
 
         private void saveEntries() {
-            Util.saveSafeActivities(getActivity(), new HashSet<String>(selectedItems));
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final Set<String> set = new HashSet<String>();
+            set.addAll(selectedItems);
+            preferences.edit().putStringSet(getString(R.string.title_activity_unlock), set).commit();
             getActivity().finish();
         }
 
@@ -144,8 +148,19 @@ public class ActActivity extends FragmentActivity {
 
             final Set<String> set = Util.getUnlockActivities(getActivity());
             ArrayList<String> tmp = new ArrayList<String>(set);
+            boolean removeOldDataKey = false;
             for (int i = 0; i < tmp.size(); i++) {
                 Log.d("Loki Debug: selected - ", tmp.get(i));
+                if (tmp.get(i).equalsIgnoreCase("Enable in-vehicle unlock")) {
+                    removeOldDataKey = true;
+                }
+            }
+
+            if (removeOldDataKey) {
+                set.clear();
+                set.add("In-vehicle unlock");
+                selectedItems.clear();
+
             }
 
             if (set != null) {

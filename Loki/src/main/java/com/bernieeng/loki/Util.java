@@ -32,7 +32,7 @@ import java.util.Set;
  */
 public class Util {
     public static final String DEF_VALUE = "";
-    private static final String PREF_KEY_WIZARD_RUN_NEEDED = "loki.wizardrun";
+//    private static final String PREF_KEY_WIZARD_RUN_NEEDED = "loki.wizardrun";
     private static DevicePolicyManager mgr;
     private static KeyguardManager.KeyguardLock keyguardLock;
 
@@ -131,7 +131,7 @@ public class Util {
 
     public static Set<String> getUnlockActivities(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getStringSet(PREF_KEY_SAFE_ACT, new HashSet<String>(0));
+        return prefs.getStringSet(context.getString(R.string.title_activity_unlock), new HashSet<String>(0));
     }
 
     public static ArrayList<String> getAllPossibleUnlockActivities(Context context) {
@@ -163,7 +163,7 @@ public class Util {
 
     public static void saveAllPossibleSafeActivitiesList(Context context, Set<String> allSafeActivities) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, allSafeActivities).commit();
+        prefs.edit().putStringSet(context.getString(R.string.title_activity_unlock), allSafeActivities).commit();
     }
 
     public static boolean isDriveUnlockEnabled(Context context) {
@@ -228,10 +228,7 @@ public class Util {
 
     public static void saveSafeActivities(Context context, Set<String> activityNames) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> set = prefs.getStringSet(PREF_KEY_SAFE_ACT, null);
-        if (set != null) {
-            prefs.edit().putStringSet(PREF_KEY_SAFE_ACT, set).commit();
-        }
+        prefs.edit().putStringSet(PREF_KEY_SAFE_ACT, activityNames).commit();
     }
 
     public static void addSafeBluetooth(Context context, String name) {
