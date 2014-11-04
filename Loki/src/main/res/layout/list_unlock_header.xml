@@ -4,17 +4,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:paddingTop="@dimen/list_item_padding"
-    android:layout_height="match_parent">
+    android:layout_height="48dp">
 
     <TextView
+        android:paddingLeft="@dimen/activity_horizontal_margin"
         android:id="@+id/txt_unlockHeader"
         android:text="@string/wifi_network"
         style="@style/unlock_header" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/unlock_header_underline"
-        />
 
 </LinearLayout>

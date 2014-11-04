@@ -21,5 +21,6 @@
     <color name="step_pager_next_tab_color">#10000000</color>
     <color name="review_green">#ff669900</color>
     <color name="text_light">#66000000</color>
-    <color name="loki_blue">#24a0cc</color>
+    <color name="loki_blue">#00b0ff</color>
+    <color name="loki_blue_dark">#088dc9</color>
 </resources>

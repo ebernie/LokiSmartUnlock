@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        style="@style/ImageUnlockItem"
-        android:background="@null"
-        android:src="@drawable/ic_action_add"
-        />
+    android:layout_height="56dp"
+    >
 
     <TextView
-        android:text="Add more"
-        android:layout_gravity="center"
-        style="@style/TextAppearanceUnlockItem"
-        android:textSize="19sp"
-        android:fontFamily="fonts/Roboto-Light.ttf"
+        android:text="@string/add_more"
+        android:textSize="14sp"
+        android:textColor="@color/loki_blue"
+        android:fontFamily="fonts/Roboto-Medium.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingStart="72dp"
+        android:paddingEnd="72dp"
+        android:gravity="center_vertical"
+        />
+
+    <View
+        android:id="@+id/view_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/unlock_item_underline"
         />
 
 </LinearLayout>

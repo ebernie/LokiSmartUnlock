@@ -5,8 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +21,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bernieeng.loki.Util;
-import com.bernieeng.loki.wizardpager.LokiWizardModel;
 import com.kofikodr.loki.R;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import butterknife.InjectView;
 /**
  * Created by ebernie on 8/19/14.
  */
-public class ActActivity extends FragmentActivity {
+public class ActActivity extends ActionBarActivity {
 
     private static ArrayList<String> selectedItems = new ArrayList<String>();
 
@@ -42,6 +42,10 @@ public class ActActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         //re-using layout from wifi select activity
         setContentView(R.layout.activity_wifi_select);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);

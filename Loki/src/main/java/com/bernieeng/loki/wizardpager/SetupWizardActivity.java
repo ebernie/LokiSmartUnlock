@@ -18,6 +18,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +43,7 @@ import java.util.Set;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class SetupWizardActivity extends FragmentActivity implements
+public class SetupWizardActivity extends ActionBarActivity implements
         PageFragmentCallbacks,
         ReviewFragment.Callbacks,
         ModelCallbacks {
@@ -64,11 +66,14 @@ public class SetupWizardActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Regular.ttf");
         setContentView(R.layout.activity_setup_wizard);
-        getActionBar().setIcon(R.drawable.ic_launcher_white);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+//        getActionBar().setIcon(R.drawable.ic_launcher_white);
         //check if wireless is disabled, and show appropriate dialog
         maybePromptEnableWireless();
-
-        getActionBar().setTitle(getString(R.string.setup));
+        toolbar.setTitle(getString(R.string.setup));
         mWizardModel = new LokiWizardModel(this);
         if (savedInstanceState != null) {
             mWizardModel.load(savedInstanceState.getBundle("model"));

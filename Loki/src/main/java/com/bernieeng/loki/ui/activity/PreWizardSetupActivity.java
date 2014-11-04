@@ -10,7 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,14 +29,18 @@ import butterknife.InjectView;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class PreWizardSetupActivity extends FragmentActivity {
+public class PreWizardSetupActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("fonts/Roboto-Condensed.ttf");
         setContentView(R.layout.activity_pre_wizard_setup);
-        getActionBar().setIcon(R.drawable.ic_launcher_white);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        
+//        getActionBar().setIcon(R.drawable.ic_launcher_white);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
@@ -88,7 +93,7 @@ public class PreWizardSetupActivity extends FragmentActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_pre_wizard_setup, container, false);
             ButterKnife.inject(this, rootView);
             return rootView;

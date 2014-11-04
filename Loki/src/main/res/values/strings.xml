@@ -93,5 +93,6 @@
     <string name="enable_in_vehicle_unlock">In-vehicle unlock</string>
     <string name="title_activity_unlock">Activity Based Unlock</string>
     <string name="rerun_setup_wizard">Touch to run setup wizard again</string>
+    <string name="add_more">ADD MORE</string>
 
 </resources>

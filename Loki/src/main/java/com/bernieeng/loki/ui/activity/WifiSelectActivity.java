@@ -1,6 +1,5 @@
 package com.bernieeng.loki.ui.activity;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
@@ -10,8 +9,10 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +34,7 @@ import java.util.Set;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class WifiSelectActivity extends FragmentActivity {
+public class WifiSelectActivity extends ActionBarActivity {
 
     private static ArrayList<String> selectedItems = new ArrayList<String>();
 
@@ -41,7 +42,11 @@ public class WifiSelectActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_select);
-        getActionBar().setIcon(R.drawable.ic_launcher_white);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+//        getActionBar().setIcon(R.drawable.ic_launcher_white);
         WifiManager wifiManager = (WifiManager) this
                 .getSystemService(Service.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
@@ -64,7 +69,7 @@ public class WifiSelectActivity extends FragmentActivity {
             }
         }
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("");
