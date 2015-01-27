@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.2'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 apply plugin: 'com.android.application'
@@ -14,11 +14,13 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 21
+        versionName "0.9.8"
+        versionCode 18
     }
 
     signingConfigs {
@@ -47,29 +49,26 @@ android {
 //            versionNameSuffix '-DEBUG'
 //        }
 
-//        debugRelease {
-//            debuggable true
-//            packageNameSuffix '.debugrelease'
-//            signingConfig signingConfigs.debug
-//        }
-
         release {
             debuggable false
             signingConfig signingConfigs.release
-            runProguard false
+            minifyEnabled false
             proguardFile 'proguard-project.txt'
         }
 
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:21.0.+"
-    compile 'com.google.android.gms:play-services:4.0.30'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.google.android.gms:play-services:6.1.+'
     compile 'com.jakewharton:butterknife:4.0.1'
     compile 'uk.co.chrisjenx.calligraphy:calligraphy:0.5.0'
     compile 'de.greenrobot:eventbus:2.0.2'
     compile 'com.google.guava:guava:18.0'
     compile project(':UndoBar')
-
 }
