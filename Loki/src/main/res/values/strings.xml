@@ -12,7 +12,7 @@
     <string name="set_password_title">Phone PIN</string>
     <string name="set_wifi_title">Set trusted WiFi name</string>
     <string name="set_wifi_name_description">Enter a WiFi network that you trust. When connected to
-        this device, a PIN will not be required for unlock.</string>
+        this device, your device will remain unlocked.</string>
     <string name="loki_disabled_warning">Loki is disabled. Make sure you\'ve defined a PIN and safe
         WiFi name</string>
     <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network (experimental)</string>
@@ -35,9 +35,9 @@
     <string name="set_bt_name">Set trusted Bluetooth device name</string>
     <string name="bt_unlock">Bluetooth unlock enabled</string>
     <string name="launch_loki">Launch Loki</string>
-    <string name="wifi_unlock_desc">Allow PIN to be disabled using WiFi</string>
+    <string name="wifi_unlock_desc">Allow WiFi to unlock your device</string>
     <string name="wifi_unlock_title">Enable WiFi unlocking</string>
-    <string name="bt_unlock_desc">Allow PIN to be disabled using a Bluetooth device</string>
+    <string name="bt_unlock_desc">Allow a BT device to unlock your device</string>
     <string name="bt_unlock_title">Enable Bluetooth unlocking</string>
     <string name="select_bt">Pick a paired Bluetooth device</string>
     <string name="no_wifi_networks_configured">No WiFi networks configured. Run this setup again
@@ -80,7 +80,7 @@
     <string name="wifi_enabled">WiFi enabled</string>
     <string name="loki_enabled">Loki smart unlock enabled</string>
     <string name="run_setup_wizard">Run Setup Wizard</string>
-    <string name="device_locekd">Device secured via PIN</string>
+    <string name="device_locekd">Device secured</string>
     <string name="device_unlocked">Device is currently unlocked</string>
     <string name="unlock_event_occured">Device lock status updated</string>
     <string name="save">Save</string>
