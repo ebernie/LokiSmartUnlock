@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kofikodr.loki"
-    >
+    package="com.kofikodr.loki">
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -72,13 +71,10 @@
         <activity
             android:name="com.bernieeng.loki.wizardpager.SetupWizardActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:noHistory="true" />
 
-        <activity
-            android:name="com.bernieeng.loki.ui.activity.WifiSelectActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name="com.bernieeng.loki.ui.activity.WifiSelectActivity" />
 
         <activity
             android:name="com.bernieeng.loki.ui.activity.HomeActivity"
@@ -91,15 +87,13 @@
         </activity>
         <activity
             android:name="com.bernieeng.loki.ui.activity.PreWizardSetupActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_pre_wizard_setup" />
 
-        <activity android:name="com.bernieeng.loki.ui.activity.ActActivity" android:screenOrientation="portrait" />
+        <activity android:name="com.bernieeng.loki.ui.activity.ActActivity" />
 
         <activity
             android:name="com.bernieeng.loki.ui.activity.BluetoothSelectActivity"
-            android:noHistory="true"
-            android:screenOrientation="portrait" />
+            android:noHistory="true" />
     </application>
 
 </manifest>

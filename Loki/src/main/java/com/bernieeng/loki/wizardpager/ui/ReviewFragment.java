@@ -52,6 +52,7 @@ public class ReviewFragment extends ListFragment implements ModelCallbacks {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         mReviewAdapter = new ReviewAdapter();
     }
 

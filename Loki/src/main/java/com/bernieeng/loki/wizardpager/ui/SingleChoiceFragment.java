@@ -57,7 +57,7 @@ public class SingleChoiceFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         Bundle args = getArguments();
         mKey = args.getString(ARG_KEY);
         mPage = mCallbacks.onGetPage(mKey);
