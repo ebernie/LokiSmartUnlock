@@ -17,8 +17,7 @@
         WiFi name</string>
     <string name="disable_keyguard_summary">Phone will not show keyguard when on a safe network (experimental)</string>
     <string name="disable_keyguard_title">Disable Keyguard</string>
-    <string name="admin_disabled_message">For security reasons, your device will now be locked with
-        the PIN set in Loki</string>
+    <string name="admin_disabled_message">For security reasons, your device will now be locked</string>
     <string name="enter_pin">Enter PIN</string>
     <string name="incorrect_pin">Incorrect PIN</string>
     <string name="disable_keyguard_summary_off">Keyguard is always shown</string>

@@ -16,7 +16,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //we lock the device to be safe
-        Util.setPassword(context, Util.getPinOrPassword(context), UnlockType.REBOOT);
+        Util.setPassword(context);
         context.startService(new Intent(context, LokiService.class));
     }
 }

@@ -49,7 +49,7 @@ public class LokiWizardModel extends AbstractWizardModel {
         PageList pageList = new PageList();
 
 //        pageList.add(new SingleFixedChoicePage(this, KEY_PIN_OR_PASS).setChoices("PIN", "Password").setRequired(true));
-        pageList.add(new PinSetupPage(this, context.getString(R.string.title_pin_setup)).setRequired(true));
+//        pageList.add(new PinSetupPage(this, context.getString(R.string.title_pin_setup)).setRequired(true));
         MultipleFixedChoicePage wifiPage = buildWiFiPage(context);
         if (wifiPage != null) {
             pageList.add(wifiPage);

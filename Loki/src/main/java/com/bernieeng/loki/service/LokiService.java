@@ -199,7 +199,7 @@ public class LokiService extends Service {
         }
 
         if (unlocks.isEmpty()) {
-            Util.setPassword(this, Util.getPinOrPassword(this), event.getType());
+            Util.setPassword(this);
         }
         showNotification();
     }
@@ -216,7 +216,7 @@ public class LokiService extends Service {
         if (mNM != null) {
             mNM.cancel(NOTIFICATION);
         }
-        Util.setPassword(this, Util.getPinOrPassword(this), UnlockType.KILLED);
+        Util.setPassword(this);
     }
 
     public class LocalBinder extends Binder {

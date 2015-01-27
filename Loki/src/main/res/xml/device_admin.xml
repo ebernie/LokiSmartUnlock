@@ -3,6 +3,7 @@
     <uses-policies>
         <force-lock/>
         <reset-password/>
+        <limit-password/>
     </uses-policies>
 
 </device-admin>

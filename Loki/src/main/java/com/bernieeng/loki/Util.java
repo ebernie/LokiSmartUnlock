@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -58,19 +59,33 @@ public class Util {
         return ssid;
     }
 
-    public static String getPinOrPassword(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_PASS_OR_PIN, null);
-    }
+//    public static String getPinOrPassword(Context context) {
+//        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_PASS_OR_PIN, null);
+//    }
 
-    public static void setPassword(Context context, String password, UnlockType key) {
+    public static void setPassword(Context context) {
         DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName cn = new ComponentName(context, AdminReceiver.class);
         if (mgr.isAdminActive(cn)) {
             // locks phone
-            mgr.resetPassword(password, 0);
+//            mgr.setPasswordMinimumLength(cn, 0);
+//            mgr.resetPassword(password, 0);
+            if (keyguardLock == null) {
+                newKeyGuard(context);
+            }
+            keyguardLock.reenableKeyguard();
+            PowerManager pmgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (!pmgr.isScreenOn()) {
+                mgr.lockNow();
+            }
         } else {
             Toast.makeText(context, "Loki lost administrative rights", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private static void newKeyGuard(Context context) {
+        KeyguardManager myKeyGuard = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        keyguardLock = myKeyGuard.newKeyguardLock(context.getPackageName());
     }
 
     public static boolean settingsOkay(Context context) {
@@ -81,14 +96,13 @@ public class Util {
 
     public static void unSetPassword(Context context, boolean disableKeyguard, UnlockType key) {
         if (settingsOkay(context)) {
-            mgr.resetPassword(DEF_VALUE, 0);
-            if (disableKeyguard) {
+//            mgr.resetPassword(DEF_VALUE, 0);
+//            if (disableKeyguard) {
                 if (keyguardLock == null) {
-                    KeyguardManager myKeyGuard = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-                    keyguardLock = myKeyGuard.newKeyguardLock(null);
+                    newKeyGuard(context);
                 }
                 keyguardLock.disableKeyguard();
-            }
+//            }
         }
     }
 

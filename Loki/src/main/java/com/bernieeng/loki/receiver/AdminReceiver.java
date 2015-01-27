@@ -21,9 +21,7 @@ public class AdminReceiver extends DeviceAdminReceiver {
     @Override
     public void onDisabled(Context context, Intent intent) {
         // lock the device with set PIN if admin rights is revoked
-        final String password = Util.getPinOrPassword(context);
         DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        mgr.resetPassword(password, 0);
         mgr.lockNow();
     }
 }
