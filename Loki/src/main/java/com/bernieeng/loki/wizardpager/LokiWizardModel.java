@@ -48,8 +48,11 @@ public class LokiWizardModel extends AbstractWizardModel {
     protected PageList onNewRootPageList(Context context) {
         PageList pageList = new PageList();
 
-//        pageList.add(new SingleFixedChoicePage(this, KEY_PIN_OR_PASS).setChoices("PIN", "Password").setRequired(true));
-//        pageList.add(new PinSetupPage(this, context.getString(R.string.title_pin_setup)).setRequired(true));
+        if (!Util.isLollipopAndHigher()) {
+            // for lollipop we don't do this because we use the system's PIN/password
+            pageList.add(new PinSetupPage(this, context.getString(R.string.title_pin_setup)).setRequired(true));
+        }
+
         MultipleFixedChoicePage wifiPage = buildWiFiPage(context);
         if (wifiPage != null) {
             pageList.add(wifiPage);

@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -33,7 +34,7 @@ import java.util.Set;
  */
 public class Util {
     public static final String DEF_VALUE = "";
-//    private static final String PREF_KEY_WIZARD_RUN_NEEDED = "loki.wizardrun";
+    //    private static final String PREF_KEY_WIZARD_RUN_NEEDED = "loki.wizardrun";
     private static DevicePolicyManager mgr;
     private static KeyguardManager.KeyguardLock keyguardLock;
 
@@ -59,28 +60,35 @@ public class Util {
         return ssid;
     }
 
-//    public static String getPinOrPassword(Context context) {
-//        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_PASS_OR_PIN, null);
-//    }
+    public static String getPinOrPassword(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_KEY_PASS_OR_PIN, null);
+    }
 
     public static void setPassword(Context context) {
         DevicePolicyManager mgr = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName cn = new ComponentName(context, AdminReceiver.class);
         if (mgr.isAdminActive(cn)) {
-            // locks phone
-//            mgr.setPasswordMinimumLength(cn, 0);
-//            mgr.resetPassword(password, 0);
-            if (keyguardLock == null) {
-                newKeyGuard(context);
-            }
-            keyguardLock.reenableKeyguard();
-            PowerManager pmgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            if (!pmgr.isScreenOn()) {
-                mgr.lockNow();
+            // only do this if NOT lollipop
+            if (!isLollipopAndHigher()) {
+                // sets password
+                mgr.resetPassword(getPinOrPassword(context), 0);
+            } else {
+                if (keyguardLock == null) {
+                    newKeyGuard(context);
+                }
+                keyguardLock.reenableKeyguard();
+                PowerManager pmgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                if (!pmgr.isScreenOn()) {
+                    mgr.lockNow();
+                }
             }
         } else {
             Toast.makeText(context, "Loki lost administrative rights", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public static boolean isLollipopAndHigher() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     private static void newKeyGuard(Context context) {
@@ -94,15 +102,16 @@ public class Util {
         return mgr.isAdminActive(cn);
     }
 
-    public static void unSetPassword(Context context, boolean disableKeyguard, UnlockType key) {
+    public static void unSetPassword(Context context) {
         if (settingsOkay(context)) {
-//            mgr.resetPassword(DEF_VALUE, 0);
-//            if (disableKeyguard) {
+            if (!isLollipopAndHigher()) {
+                mgr.resetPassword(DEF_VALUE, 0);
+            } else {
                 if (keyguardLock == null) {
                     newKeyGuard(context);
                 }
                 keyguardLock.disableKeyguard();
-//            }
+            }
         }
     }
 
@@ -160,20 +169,6 @@ public class Util {
         }
         return new ArrayList<String>(prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, new HashSet<String>(0)));
     }
-
-//    public static void wizardRunCheck(Context context) {
-//        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//        Set<String> set = prefs.getStringSet(PREF_KEY_ALL_POSSIBLE_SAFE_ACT, null);
-//        if (set == null) {
-//            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, true).commit();
-//        } else {
-//            prefs.edit().putBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false).commit();
-//        }
-//    }
-
-//    public static boolean isWizardRunNeeded(Context context) {
-//        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_KEY_WIZARD_RUN_NEEDED, false);
-//    }
 
     public static void saveAllPossibleSafeActivitiesList(Context context, Set<String> allSafeActivities) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
